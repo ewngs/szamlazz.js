@@ -18,7 +18,7 @@
             <element name="postazasiIrsz" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="postazasiTelepules" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="postazasiCim" type="string" maxOccurs="1" minOccurs="0"></element>
-            <element name="vevoFokonyv" type="tns:vevoFokonyvTipus" maxOccurs="1" minOccurs="0"></element>            
+            <element name="vevoFokonyv" type="tns:vevoFokonyvTipus" maxOccurs="1" minOccurs="0"></element>
             <element name="azonosito" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="alairoNeve" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="telefonszam" type="string" maxOccurs="1" minOccurs="0"></element>
@@ -33,7 +33,7 @@
             <element name="vevoFokonyviSzam" type="string" maxOccurs="1" minOccurs="0"></element>
         </sequence>
     </complexType>
-    
+
     <complexType name="eladoTipus">
         <sequence>
             <element name="bank" type="string" maxOccurs="1" minOccurs="0"></element>
@@ -44,7 +44,7 @@
             <element name="alairoNeve" type="string" maxOccurs="1" minOccurs="0"></element>
         </sequence>
     </complexType>
-    
+
     <complexType name="beallitasokTipus">
         <sequence>
             <element name="felhasznalo" type="string" maxOccurs="1" minOccurs="0"></element>
@@ -58,7 +58,7 @@
             <element name="aggregator" type="string" maxOccurs="1" minOccurs="0"></element>
         </sequence>
     </complexType>
-    
+
     <complexType name="tetelTipus">
         <sequence>
             <element name="megnevezes" type="string" maxOccurs="1" minOccurs="1"></element>
@@ -67,7 +67,7 @@
             <element name="mennyisegiEgyseg" type="string" maxOccurs="1" minOccurs="1"></element>
             <element name="nettoEgysegar" type="double" maxOccurs="1" minOccurs="1"></element>
             <element name="afakulcs" type="string" maxOccurs="1" minOccurs="1"></element>
-            <element name="arresAfaAlap" type="double" maxOccurs="1" minOccurs="0"></element>                        
+            <element name="arresAfaAlap" type="double" maxOccurs="1" minOccurs="0"></element>
             <element name="nettoErtek" type="double" maxOccurs="1" minOccurs="1"></element>
             <element name="afaErtek" type="double" maxOccurs="1" minOccurs="1"></element>
             <element name="bruttoErtek" type="double" maxOccurs="1" minOccurs="1"></element>
@@ -181,7 +181,7 @@
             <element name="uticel" type="string" maxOccurs="1" minOccurs="0"></element>
             <!-- TOF, PPP, SPRINTER, FOXPOST, EMPTY lehet az értéke, ha nincs fuvarlevél, akkor nem kell megadni -->
             <element name="futarSzolgalat" type="string" maxOccurs="1" minOccurs="0"></element>
-            <!-- Általános vonalkód megadási lehetőség, ha az alágban nem adjuk meg az adott futárszolgálat 
+            <!-- Általános vonalkód megadási lehetőség, ha az alágban nem adjuk meg az adott futárszolgálat
                  vonalkódjának előállításához szükséges adatokat akkor ezt használja a rendszer. -->
             <element name="vonalkod" type="string" maxOccurs="1" minOccurs="0"></element>
             <!-- A fuvarlevélen ez a megjegyzés jelenik meg. -->

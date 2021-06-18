@@ -64,13 +64,24 @@ function wrapWithElement (name, data, indentLevel) {
 
 exports.wrapWithElement = wrapWithElement
 
-function xml2obj (xml, objList, cb) {
-  xml2js.parseString(xml, (e, res) => {
-    if (e) {
-      return cb(e)
-    }
+const parseString = (xml) => {
+  return new Promise((resolve, reject) => {
+    xml2js.parseString(xml, (error, result) => {
+      if (error) {
+        reject(error)
+      } else {
+        resolve(result)
+      }
+    })
+  })
+}
 
-    const o = {}
+exports.parseString = parseString
+
+const xml2obj = async (xml, objList) => {
+  try {
+    const res = await parseString(xml)
+    const hash = {}
     Object.keys(objList).forEach(keyPath => {
       const path = keyPath.split('.')
 
@@ -88,11 +99,13 @@ function xml2obj (xml, objList, cb) {
       }
 
       if (found) {
-        o[ objList[ keyPath ] ] = p[ 0 ]
+        hash[ objList[ keyPath ] ] = p[ 0 ]
       }
     })
 
-    cb(null, o)
-  })
+    return hash
+  } catch (e) {
+    throw e
+  }
 }
 exports.xml2obj = xml2obj

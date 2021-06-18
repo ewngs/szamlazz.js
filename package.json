@@ -1,11 +1,12 @@
 {
   "name": "szamlazz.js",
-  "version": "4.1.0",
+  "version": "3.1.0",
   "description": "Integration module for the szamlazz.hu online invoice provider",
   "main": "index.js",
   "jsnext:main": "./src/index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha 'tests/*.spec.js'"
+    "test": "./node_modules/.bin/mocha 'tests/*.spec.js'",
+    "testWatch": "mocha 'tests/*.spec.js' --watch"
   },
   "repository": {
     "type": "git",
@@ -17,13 +18,18 @@
     "chai": "^3.5.0",
     "mocha": "^5.2.0",
     "mockery": "^1.7.0",
-    "sinon": "^1.17.4"
+    "sinon": "^5.0.0"
   },
   "dependencies": {
+    "axios": "^0.21.1",
+    "axios-cookiejar-support": "^1.0.1",
+    "chai-as-promised": "^7.1.1",
     "esnextguardian": "^1.2.1",
+    "form-data": "^4.0.0",
     "libxmljs2": "^0.21.6",
     "merge": "^1.2.0",
     "request": "^2.73.0",
+    "tough-cookie": "^4.0.0",
     "xml2js": "^0.4.16"
   }
 }

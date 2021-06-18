@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmlszamlavalasz>
+    <sikeres>false</sikeres>
+    <hibakod><![CDATA[7]]></hibakod>
+    <hibauzenet><![CDATA[Hiányzó adat: számla agent xml lekérés hiba (ismeretlen számlaszám).]]></hibauzenet>
+</xmlszamlavalasz>

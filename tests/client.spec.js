@@ -4,13 +4,16 @@
 const fs = require('fs')
 const path = require('path')
 const xmljs = require('libxmljs2')
+const axios = require('axios')
 const sinon = require('sinon')
-const mockery = require('mockery')
-const expect = require('chai').expect
+const chai = require('chai')
+const chaiAsPromised = require('chai-as-promised')
+const expect = chai.expect
+chai.use(chaiAsPromised)
 
 const setup = require('./resources/setup')
 
-let requestStub
+let axiosStub
 
 let client
 let tokenClient
@@ -22,18 +25,8 @@ let invoice
 
 let Szamlazz
 
-beforeEach(function (done) {
-  mockery.enable({
-    warnOnReplace: false,
-    warnOnUnregistered: false,
-    useCleanCache: true
-  })
-
-  requestStub = sinon.stub()
-  requestStub.jar = function () {}
-
-  mockery.registerMock('request', requestStub)
-
+beforeEach(done => {
+  axiosStub = sinon.stub(axios, 'post')
   Szamlazz = require('..')
   client = setup.createClient(Szamlazz)
   tokenClient = setup.createTokenClient(Szamlazz)
@@ -41,37 +34,40 @@ beforeEach(function (done) {
   buyer = setup.createBuyer(Szamlazz)
   soldItem1 = setup.createSoldItemNet(Szamlazz)
   soldItem2 = setup.createSoldItemGross(Szamlazz)
-  invoice = setup.createInvoice(Szamlazz, seller, buyer, [ soldItem1, soldItem2 ])
+  invoice = setup.createInvoice(Szamlazz, seller, buyer, [soldItem1, soldItem2])
 
   done()
 })
 
-afterEach(function (done) {
-  mockery.disable()
+afterEach(done => {
+  sinon.restore()
   done()
 })
 
-describe('Client', function () {
-  describe('constructor', function () {
-    it('should set _options property', function (done) {
+describe('Client', () => {
+  afterEach(() => {
+    sinon.reset()
+  })
+  describe('constructor', () => {
+    it('should set _options property', done => {
       expect(client).to.have.property('_options').that.is.an('object')
       done()
     })
 
-    it('should set user', function (done) {
+    it('should set user', done => {
       expect(client._options).to.have.property('user').that.is.a('string')
       done()
     })
 
-    it('should set password', function (done) {
+    it('should set password', done => {
       expect(client._options).to.have.property('password').that.is.a('string')
       done()
     })
   })
 
-  describe('_generateInvoiceXML', function () {
-    it('should return valid XML', function (done) {
-      fs.readFile(path.join(__dirname, 'resources', 'xmlszamla.xsd'), function (err, data) {
+  describe('_generateInvoiceXML', () => {
+    it('should return valid XML', done => {
+      fs.readFile(path.join(__dirname, 'resources', 'xmlszamla.xsd'), (err, data) => {
         if (!err) {
           let xsd = xmljs.parseXmlString(data)
           let xml = xmljs.parseXmlString(client._generateInvoiceXML(invoice))
@@ -82,204 +78,188 @@ describe('Client', function () {
     })
   })
 
-  describe('issueInvoice', function () {
-    describe('HTTP status', function () {
-      it('should handle failed requests', function (done) {
-        requestStub.yields(null, {
-          statusCode: 500,
-          statusMessage: 'Internal Server Error'
-        })
+  describe('issueInvoice', () => {
+    describe('HTTP status', () => {
+      it('should handle failed requests', async () => {
+        axiosStub.resolves(new Promise(r => r({ status: 404, statusText: 'Not found' })))
 
-        client.issueInvoice(invoice, function (err, body, response) {
-          expect(err).to.be.a('error')
-          done()
-        })
+        try {
+          await client.issueInvoice(invoice)
+        } catch (e) {
+          expect(e.message).to.be.string('404 Not found')
+        }
       })
     })
 
-    describe('service error response', function () {
-      beforeEach(function (done) {
-        requestStub.yields(null, {
-          statusCode: 200,
+    describe('service error response', () => {
+      it('should throw error', async () => {
+        axiosStub.resolves(new Promise(r => r({
+          status: 200,
           headers: {
             szlahu_error_code: '57',
             szlahu_error: 'Some error message from the remote service'
           }
-        })
-        done()
-      })
+        })))
 
-      it('should have error parameter', function (done) {
-        client.issueInvoice(invoice, function (err) {
-          expect(err).to.be.a('error')
-          done()
-        })
-      })
-
-      it('should have `szlahu_error_code` property', function (done) {
-        client.issueInvoice(invoice, function (e, body, response) {
-          expect(response.headers).to.have.property('szlahu_error_code')
-          done()
-        })
-      })
-
-      it('should have `szlahu_error` property', function (done) {
-        client.issueInvoice(invoice, function (e, body, response) {
-          expect(response.headers).to.have.property('szlahu_error')
-          done()
-        })
+        try {
+          await client.issueInvoice(invoice)
+        } catch (e) {
+          expect(e.message).to.be.string('Some error message from the remote service')
+        }
       })
     })
 
-    describe('successful invoice generation without download request', function () {
-      beforeEach(function (done) {
-        fs.readFile(path.join(__dirname, 'resources', 'success_without_pdf.xml'), function (e, data) {
-          requestStub.yields(null, {
-            statusCode: 200,
+    describe('successful invoice generation without download request', () => {
+      beforeEach(done => {
+        fs.readFile(path.join(__dirname, 'resources', 'success_without_pdf.xml'), (e, data) => {
+          axiosStub.resolves(new Promise(r => r({
+            status: 200,
             headers: {
               szlahu_bruttovegosszeg: '6605',
               szlahu_nettovegosszeg: '5201',
               szlahu_szamlaszam: '2016-139'
-            }
-          }, data)
+            },
+            data: Buffer.from(data).toString('utf8')
+          })))
 
           client.setRequestInvoiceDownload(false)
           done()
         })
       })
 
-      it('should have result parameter', function (done) {
-        client.issueInvoice(invoice, function (err, result) {
-          expect(err).to.be.a('null')
+      it('should have result parameter', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+        expect(httpResponse).to.have.all.keys(
+          'invoiceId',
+          'netTotal',
+          'grossTotal'
+        )
 
-          expect(result).to.have.all.keys(
-            'invoiceId',
-            'netTotal',
-            'grossTotal'
-          )
-
-          done()
-        })
       })
 
-      it('should have `invoiceId` property', function (done) {
-        client.issueInvoice(invoice, function (err, result) {
-          expect(err).to.be.a('null')
-          expect(result).to.have.property('invoiceId').that.is.a('string')
-          done()
-        })
+      it('should have `invoiceId` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+
+        expect(httpResponse).to.have.property('invoiceId').that.is.a('string')
       })
 
-      it('should have `netTotal` property', function (done) {
-        client.issueInvoice(invoice, function (err, result) {
-          expect(err).to.be.a('null')
-          expect(parseFloat(result.netTotal)).is.a('number')
-          done()
-        })
+      it('should have `netTotal` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+
+        expect(parseFloat(httpResponse.netTotal)).is.a('number')
       })
 
-      it('should have `grossTotal` property', function (done) {
-        client.issueInvoice(invoice, function (err, result) {
-          expect(err).to.be.a('null')
-          expect(parseFloat(result.grossTotal)).is.a('number')
-          done()
-        })
+      it('should have `grossTotal` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+
+        expect(parseFloat(httpResponse.grossTotal)).is.a('number')
       })
     })
 
-    describe('successful invoice generation with download request', function () {
-      beforeEach(function (done) {
-        fs.readFile(path.join(__dirname, 'resources', 'success_without_pdf.xml'), function (e, data) {
-          requestStub.yields(null, {
-            statusCode: 200,
+    describe('successful invoice generation with download request', () => {
+      beforeEach(done => {
+        fs.readFile(path.join(__dirname, 'resources', 'success_with_pdf.xml'), (e, data) => {
+          axiosStub.resolves(new Promise(r => r({
+            status: 200,
             headers: {
               szlahu_bruttovegosszeg: '6605',
               szlahu_nettovegosszeg: '5201',
               szlahu_szamlaszam: '2016-139'
-            }
-          }, data)
+            },
+            data: Buffer.from(data).toString('utf8')
+          })))
 
           client.setRequestInvoiceDownload(true)
           done()
         })
       })
 
-      it('should have result parameter', function (done) {
-        client.issueInvoice(invoice, function (err, result) {
-          expect(err).to.be.a('null')
+      it('should have result parameter', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
 
-          expect(result).to.have.all.keys(
-            'invoiceId',
-            'netTotal',
-            'grossTotal',
-            'pdf'
-          )
+        expect(httpResponse).to.have.all.keys(
+          'invoiceId',
+          'netTotal',
+          'grossTotal',
+          'pdf'
+        )
+      })
 
+      it('should have `invoiceId` property', async () => {
+        const httpResposne = await client.issueInvoice(invoice)
+        expect(httpResposne).to.have.property('invoiceId').that.is.a('string')
+      })
+
+      it('should have `netTotal` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+        expect(parseFloat(httpResponse.netTotal)).is.a('number')
+      })
+
+      it('should have `grossTotal` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+        expect(parseFloat(httpResponse.grossTotal)).is.a('number')
+      })
+
+      it('should have `pdf` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+        expect(httpResponse.pdf).to.be.an.instanceof(Buffer)
+      })
+    })
+  })
+
+  describe('getInvoiceData', () => {
+    describe('unsuccessful invoice generation', () => {
+      beforeEach(done => {
+        fs.readFile(path.join(__dirname, 'resources', 'unknown_invoice_number.xml'), (e, data) => {
+          axiosStub.resolves(new Promise(r => r({
+            status: 200,
+            headers: {},
+            data: Buffer.from(data).toString('utf8')
+          })))
+
+          client.setRequestInvoiceDownload(true)
           done()
         })
       })
 
-      it('should have `invoiceId` property', function (done) {
-        client.issueInvoice(invoice, function (err, result) {
-          expect(err).to.be.a('null')
-          expect(result).to.have.property('invoiceId').that.is.a('string')
-          done()
-        })
-      })
-
-      it('should have `netTotal` property', function (done) {
-        client.issueInvoice(invoice, function (err, result) {
-          expect(err).to.be.a('null')
-          expect(parseFloat(result.netTotal)).is.a('number')
-          done()
-        })
-      })
-
-      it('should have `grossTotal` property', function (done) {
-        client.issueInvoice(invoice, function (err, result) {
-          expect(err).to.be.a('null')
-          expect(parseFloat(result.grossTotal)).is.a('number')
-          done()
-        })
-      })
-
-      it('should have `pdf` property', function (done) {
-        client.issueInvoice(invoice, function (err, result) {
-          expect(err).to.be.a('null')
-          expect(result.pdf).to.be.an.instanceof(Buffer)
-          done()
-        })
+      it('should throw error', async () => {
+        try {
+          const res = await client.getInvoiceData({
+            invoiceId: 'TEST-ISSUE-NUMBER'
+          })
+        } catch (e) {
+          expect(e.message).to.be.string('Hiányzó adat: számla agent xml lekérés hiba (ismeretlen számlaszám).')
+        }
       })
     })
   })
 })
 
-
-describe('Client with auth token', function () {
-  describe('constructor', function () {
-    it('should set _options property', function (done) {
+describe('Client with auth token', () => {
+  describe('constructor', () => {
+    it('should set _options property', done => {
       expect(tokenClient).to.have.property('_options').that.is.an('object')
       done()
     })
 
-    it('should set authToken', function (done) {
+    it('should set authToken', done => {
       expect(tokenClient._options).to.have.property('authToken').that.is.a('string')
       done()
     })
 
-    it('should not set user', function (done) {
+    it('should not set user', done => {
       expect(tokenClient._options).to.not.have.property('user')
       done()
     })
-    it('should not set password', function (done) {
+    it('should not set password', done => {
       expect(tokenClient._options).to.not.have.property('password')
       done()
     })
   })
 
-  describe('_generateInvoiceXML', function () {
-    it('should return valid XML', function (done) {
-      fs.readFile(path.join(__dirname, 'resources', 'xmlszamla.xsd'), function (err, data) {
+  describe('_generateInvoiceXML', () => {
+    it('should return valid XML', done => {
+      fs.readFile(path.join(__dirname, 'resources', 'xmlszamla.xsd'), (err, data) => {
         if (!err) {
           let xsd = xmljs.parseXmlString(data)
           let xml = xmljs.parseXmlString(tokenClient._generateInvoiceXML(invoice))

@@ -129,17 +129,15 @@ let invoice = new szamlazz.Invoice({
 To issue the invoice with szamlazz.hu:
 
 ```javascript
-szamlazzClient.issueInvoice(invoice, (e, result) =>
-{
-  if (e) {
-    console.error(e.message, e.code) // handle errors
-    throw e;
-  }
-
+try {
+  const result = await szamlazzClient.issueInvoice(invoice)
   if (result.pdf) {
     // a Buffer with the pdf data is available if requestInvoiceDownload === true
   }
-})
+} catch (e) {
+  // Handle error
+}
+
 ```
 
 ### Get invoice data
@@ -152,8 +150,7 @@ const szamlazzClient = new szamlazz.Client({
   password: 'PASSWORD'
 })
 
-const getInvoiceData = util.promisify(szamlazzClient.getInvoiceData).bind(szamlazzClient)
-const invoice = await getInvoiceData({
+const invoice = await szamlazzClient.getInvoiceData({
   invoiceId: 'E-RNJLO-2019-1234', // invoice number
   orderNumber: '1234', // order number
   pdf: false // downloads the pdf invoice. optional, default: false
@@ -172,8 +169,7 @@ const szamlazzClient = new szamlazz.Client({
   password: 'PASSWORD'
 })
 
-const reverseInvoice = util.promisify(szamlazzClient.reverseInvoice).bind(szamlazzClient)
-const invoice = await reverseInvoice({
+const invoice = await szamlazzClient.reverseInvoice({
   invoiceId: 'E-RNJLO-2019-1234', // invoice number
   eInvoice: true, // create e-invoice
   requestInvoiceDownload: false, // downloads the issued pdf invoice

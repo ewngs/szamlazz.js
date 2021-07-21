@@ -115,3 +115,36 @@ exports.createInvoice = function (Szamlazz, seller, buyer, items) {
     items
   })
 }
+
+exports.createReceiptItem1 = function (Szamlazz) {
+  return new Szamlazz.ReceiptItem({
+    label: 'Receipt item 1',
+    id: 'receipt-item-1-id',
+    quantity: 2,
+    unit: 'qt',
+    netUnitPrice: 100,
+    vat: 27
+  })
+}
+
+exports.createReceiptItem2 = function (Szamlazz) {
+  return new Szamlazz.ReceiptItem({
+    label: 'Receipt item 2',
+    id: 'receipt-item-2-id',
+    quantity: 4,
+    unit: 'qt',
+    netUnitPrice: 44,
+    vat: 27
+  })
+}
+
+exports.createReceipt = function (Szamlazz, items) {
+  return new Szamlazz.Receipt({
+    paymentMethod: Szamlazz.PaymentMethod.BankTransfer,
+    currency: Szamlazz.Currency.Ft,
+    language: Szamlazz.Language.Hungarian,
+    prefix: 'NY',
+    comment: 'Receipt comment',
+    items
+  })
+}

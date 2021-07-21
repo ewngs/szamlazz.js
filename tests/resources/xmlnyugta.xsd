@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.szamlazz.hu/xmlnyugtacreate" xmlns:tns="http://www.szamlazz.hu/xmlnyugtacreate" elementFormDefault="qualified">
+    <complexType name="beallitasokTipus">
+        <all>
+            <element name="felhasznalo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="jelszo" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="szamlaagentkulcs" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="pdfLetoltes" type="boolean" maxOccurs="1" minOccurs="1"></element>
+        </all>
+    </complexType>
+    <complexType name="fejlecTipus">
+        <all>
+            <element name="hivasAzonosito" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="elotag" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="fizmod" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="penznem" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="devizaarf" type="double" maxOccurs="1" minOccurs="0"></element>
+            <element name="devizabank" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="megjegyzes" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="pdfSablon" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="fokonyvVevo" type="string" maxOccurs="1" minOccurs="0"></element>
+        </all>
+    </complexType>
+    <complexType name="tetelTipus">
+        <all>
+            <element name="megnevezes" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="azonosito" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="mennyiseg" type="double" maxOccurs="1" minOccurs="1"></element>
+            <element name="mennyisegiEgyseg" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="nettoEgysegar" type="double" maxOccurs="1" minOccurs="1"></element>
+            <element name="afakulcs" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="netto" type="double" maxOccurs="1" minOccurs="1"></element>
+            <element name="afa" type="double" maxOccurs="1" minOccurs="1"></element>
+            <element name="brutto" type="double" maxOccurs="1" minOccurs="1"></element>
+            <element name="fokonyv" type="tns:tetelFokonyvTipus" maxOccurs="1" minOccurs="0"></element>
+        </all>
+    </complexType>
+    <complexType name="tetelFokonyvTipus">
+        <all>
+            <element name="arbevetel" type="string" maxOccurs="1" minOccurs="0"></element>
+            <element name="afa" type="string" maxOccurs="1" minOccurs="0"></element>
+        </all>
+    </complexType>
+    <complexType name="tetelekTipus">
+        <sequence>
+            <element name="tetel" type="tns:tetelTipus" maxOccurs="unbounded" minOccurs="1"></element>
+        </sequence>
+    </complexType>
+    <!-- jóváírások -->
+    <complexType name="kifizetesTipus">
+        <all>
+            <element name="fizetoeszkoz" type="string" maxOccurs="1" minOccurs="1"></element>
+            <element name="osszeg" type="double" maxOccurs="1" minOccurs="1"></element>
+            <element name="leiras" type="string" maxOccurs="1" minOccurs="0"></element>
+        </all>
+    </complexType>
+    <complexType name="kifizetesekTipus">
+        <sequence>
+            <element name="kifizetes"             type="tns:kifizetesTipus"   maxOccurs="unbounded" minOccurs="1"></element>
+        </sequence>
+    </complexType>
+    <element name="xmlnyugtacreate">
+        <complexType>
+            <all>
+                <element name="beallitasok" type="tns:beallitasokTipus" maxOccurs="1" minOccurs="1"></element>
+                <element name="fejlec" type="tns:fejlecTipus" maxOccurs="1" minOccurs="1"></element>
+                <element name="tetelek" type="tns:tetelekTipus" maxOccurs="1" minOccurs="1"></element>
+                <element name="kifizetesek" type="tns:kifizetesekTipus" maxOccurs="1" minOccurs="0"></element>
+            </all>
+        </complexType>
+    </element>
+</schema>

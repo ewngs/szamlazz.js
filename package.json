@@ -1,6 +1,6 @@
 {
   "name": "szamlazz.js",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "Integration module for the szamlazz.hu online invoice provider",
   "main": "index.js",
   "jsnext:main": "./src/index.js",

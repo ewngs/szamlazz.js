@@ -151,7 +151,6 @@ class Client {
       XMLUtils.wrapWithElement('beallitasok', [
         ...this._getAuthFields(),
         [ 'eszamla', this._options.eInvoice ],
-        [ 'kulcstartojelszo', this._options.passphrase ],
         [ 'szamlaLetoltes', this._options.requestInvoiceDownload ],
         [ 'szamlaLetoltesPld', this._options.downloadedInvoiceCount ],
         [ 'valaszVerzio', this._options.responseVersion ]

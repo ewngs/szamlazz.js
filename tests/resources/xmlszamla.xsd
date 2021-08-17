@@ -51,7 +51,6 @@
             <element name="jelszo" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="szamlaagentkulcs" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="eszamla" type="boolean" maxOccurs="1" minOccurs="1"></element>
-            <element name="kulcstartojelszo" type="string" maxOccurs="1" minOccurs="0"></element>
             <element name="szamlaLetoltes" type="boolean" maxOccurs="1" minOccurs="1"></element>
             <element name="szamlaLetoltesPld" type="int" maxOccurs="1" minOccurs="0"></element>
             <element name="valaszVerzio" type="int" maxOccurs="1" minOccurs="0"></element>

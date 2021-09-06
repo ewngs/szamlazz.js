@@ -194,22 +194,17 @@ class Client {
           return cb(err, body, httpResponse)
         }
 
-        if (this._options.requestInvoiceDownload) {
-          if (this._options.responseVersion === 2) {
-            XMLUtils.xml2obj(body, { 'xmlszamlavalasz.pdf': 'pdf' }, (err3, parsed) => {
-              if (err3) {
-                return cb(err3, body, httpResponse)
-              }
-              result.pdf = new Buffer(parsed.pdf, 'base64')
-              cb(null, result, httpResponse)
-            })
-          } else {
-            result.pdf = result.pdf ? result.pdf : body
-            cb(null, result, httpResponse)
-          }
-        } else {
-          cb(null, result, httpResponse)
+
+        if (this._options.requestInvoiceDownload && this._options.responseVersion === 2) {
+          XMLUtils.xml2obj(body, { 'xmlszamlavalasz.pdf': 'pdf' }, (err3, parsed) => {
+            if (err3) {
+              return cb(err3, body, httpResponse)
+            }
+            result.pdf = new Buffer(parsed.pdf, 'base64')
+          })
         }
+
+        cb(null, result, httpResponse)
       })
     })
   }

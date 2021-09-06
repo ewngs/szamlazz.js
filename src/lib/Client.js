@@ -30,10 +30,10 @@ class Client {
 
     if (!this.useToken) {
       assert(typeof this._options.user === 'string' && this._options.user.trim().length > 1,
-      'Valid User field missing form client options')
+        'Valid User field missing form client options')
 
       assert(typeof this._options.password === 'string' && this._options.password.trim().length > 1,
-      'Valid Password field missing form client options')
+        'Valid Password field missing form client options')
     }
 
     this._cookieJar = request.jar()
@@ -91,20 +91,17 @@ class Client {
     this._sendRequest(
       'action-szamla_agent_st',
       xml,
-      'utf8',
+      null,
       (httpResponse, cb) => {
-        let pdf = null
         const contentType = httpResponse.headers['content-type']
-
-        if (contentType && contentType.indexOf('application/pdf') === 0) {
-          pdf = httpResponse.body
-        }
+        const isPdfAvailable = options.requestInvoiceDownload
+          && contentType && contentType.indexOf('application/pdf') === 0
 
         cb(null, {
           invoiceId: httpResponse.headers.szlahu_szamlaszam,
           netTotal: httpResponse.headers.szlahu_nettovegosszeg,
           grossTotal: httpResponse.headers.szlahu_bruttovegosszeg,
-          pdf: pdf
+          pdf: isPdfAvailable ? httpResponse.body : null
         })
       },
       cb)
@@ -120,7 +117,7 @@ class Client {
           invoiceId: httpResponse.headers.szlahu_szamlaszam,
           netTotal: httpResponse.headers.szlahu_nettovegosszeg,
           grossTotal: httpResponse.headers.szlahu_bruttovegosszeg
-        });
+        })
       },
       cb)
   }
@@ -163,7 +160,7 @@ class Client {
   _sendRequest (fileFieldName, data, encoding, getResult, cb) {
     const formData = {}
 
-    formData[ fileFieldName ] = {
+    formData[fileFieldName] = {
       value: data,
       options: {
         filename: 'request.xml',
@@ -207,7 +204,7 @@ class Client {
               cb(null, result, httpResponse)
             })
           } else {
-            result.pdf = body
+            result.pdf = result.pdf ? result.pdf : body
             cb(null, result, httpResponse)
           }
         } else {

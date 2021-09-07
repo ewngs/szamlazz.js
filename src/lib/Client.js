@@ -202,6 +202,8 @@ class Client {
             }
             result.pdf = new Buffer(parsed.pdf, 'base64')
           })
+        } else if (this._options.requestInvoiceDownload && this._options.responseVersion === 1) {
+          result.pdf = httpResponse.body;
         }
 
         cb(null, result, httpResponse)

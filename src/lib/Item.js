@@ -69,7 +69,8 @@ class Item {
     indentLevel = indentLevel || 0
 
     return XMLUtils.wrapWithElement('tetel', [
-      [ 'megnevezes', this._options.label ],
+      [ 'megnevezes', this._options.label],
+      [ 'azonosito', this._options.sku ],
       [ 'mennyiseg', this._options.quantity ],
       [ 'mennyisegiEgyseg', this._options.unit ],
       [ 'nettoEgysegar', this._options.netUnitPrice ],

@@ -48,7 +48,7 @@ class Item {
         throw new Error('Net or Gross Value is required for Item price calculation')
       }
     } else if (typeof this._options.vat === 'string') {
-      if (['TAM', 'AAM', 'EU', 'EUK', 'MAA', 'ÁKK'].includes(this._options.vat)) {
+      if (['TAM', 'AAM', 'EU', 'EUK', 'MAA', 'ÁKK', "TEHK"].includes(this._options.vat)) {
         if (this._options.netUnitPrice) {
           this._options.netValue = round(this._options.netUnitPrice * this._options.quantity, currency.roundPriceExp)
           this._options.vatValue = 0

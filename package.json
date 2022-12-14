@@ -25,7 +25,6 @@
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "mocha": "^10.1.0",
-    "mockery": "^1.7.0",
     "sinon": "^5.0.0"
   },
   "dependencies": {

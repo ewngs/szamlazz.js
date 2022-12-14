@@ -16,38 +16,39 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-let axiosStub
-
-let client
-let tokenClient
-let seller
-let buyer
-let soldItem1
-let soldItem2
-let invoice
-
-beforeEach(done => {
-  axiosStub = sinon.stub(axios, 'post')
-  client = createClient(Client)
-  tokenClient = createTokenClient(Client)
-  seller = createSeller(Seller)
-  buyer = createBuyer(Buyer)
-  soldItem1 = createSoldItemNet(Item)
-  soldItem2 = createSoldItemGross(Item)
-  invoice = createInvoice(Invoice, seller, buyer, [soldItem1, soldItem2])
-
-  done()
-})
-
-afterEach(done => {
-  sinon.restore()
-  done()
-})
-
 describe('Client', () => {
+  let axiosStub
+
+  let client
+  let tokenClient
+  let seller
+  let buyer
+  let soldItem1
+  let soldItem2
+  let invoice
+
+  before(() => {
+    axiosStub = sinon.stub(axios, 'post')
+  })
+
+  beforeEach(() => {
+    client = createClient(Client)
+    tokenClient = createTokenClient(Client)
+    seller = createSeller(Seller)
+    buyer = createBuyer(Buyer)
+    soldItem1 = createSoldItemNet(Item)
+    soldItem2 = createSoldItemGross(Item)
+    invoice = createInvoice(Invoice, seller, buyer, [soldItem1, soldItem2])
+  })
+
   afterEach(() => {
     sinon.reset()
   })
+
+  after(() => {
+    sinon.restore()
+  })
+
   describe('constructor', () => {
     it('should set _options property', done => {
       expect(client).to.have.property('_options').that.is.an('object')
@@ -224,6 +225,12 @@ describe('Client', () => {
 
 describe('Client with auth token', () => {
   describe('constructor', () => {
+    let tokenClient
+
+    beforeEach(() => {
+      tokenClient = createTokenClient(Client)
+    })
+
     it('should set _options property', done => {
       expect(tokenClient).to.have.property('_options').that.is.an('object')
       done()

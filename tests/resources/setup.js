@@ -1,4 +1,12 @@
+import { join } from 'desm'
+
 import {Currency, Language, PaymentMethod, TaxSubjects} from "../../lib/Constants.js"
+
+export const RESPONSE_FILE_PATHS = Object.freeze({
+  SUCCESS_WITH_PDF: join(import.meta.url, 'success_with_pdf.xml'),
+  SUCCESS_WITHOUT_PDF: join(import.meta.url, 'success_without_pdf.xml'),
+  UNKNOWN_INVOICE_NUMBER: join(import.meta.url, 'unknown_invoice_number.xml')
+})
 
 /**
  * Create client

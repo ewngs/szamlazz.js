@@ -8,23 +8,22 @@ const expect = chai.expect
 import {Buyer, Invoice, Item, Seller} from '../index.js'
 import {createSeller, createBuyer, createSoldItemNet, createSoldItemGross, createInvoice} from './resources/setup.js'
 
-let seller
-let buyer
-let soldItem1
-let soldItem2
-let invoice
-
-beforeEach(function (done) {
-  seller = createSeller(Seller)
-  buyer = createBuyer(Buyer)
-  soldItem1 = createSoldItemNet(Item)
-  soldItem2 = createSoldItemGross(Item)
-  invoice = createInvoice(Invoice, seller, buyer, [ soldItem1, soldItem2 ])
-
-  done()
-})
-
 describe('Item', function () {
+
+  let seller
+  let buyer
+  let soldItem1
+  let soldItem2
+  let invoice
+
+  beforeEach(function () {
+    seller = createSeller(Seller)
+    buyer = createBuyer(Buyer)
+    soldItem1 = createSoldItemNet(Item)
+    soldItem2 = createSoldItemGross(Item)
+    invoice = createInvoice(Invoice, seller, buyer, [ soldItem1, soldItem2 ])
+  })
+
   describe('constructor', function () {
     it('should set _options property', function (done) {
       expect(soldItem1).to.have.property('_options').that.is.an('object')

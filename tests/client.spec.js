@@ -50,19 +50,16 @@ describe('Client', () => {
   })
 
   describe('constructor', () => {
-    it('should set _options property', done => {
+    it('should set _options property', () => {
       expect(client).to.have.property('_options').that.is.an('object')
-      done()
     })
 
-    it('should set user', done => {
+    it('should set user', () => {
       expect(client._options).to.have.property('user').that.is.a('string')
-      done()
     })
 
-    it('should set password', done => {
+    it('should set password', () => {
       expect(client._options).to.have.property('password').that.is.a('string')
-      done()
     })
   })
 
@@ -71,11 +68,7 @@ describe('Client', () => {
       it('should handle failed requests', async () => {
         axiosStub.resolves(new Promise(r => r({ status: 404, statusText: 'Not found' })))
 
-        try {
-          await client.issueInvoice(invoice)
-        } catch (e) {
-          expect(e.message).to.be.string('404 Not found')
-        }
+        await expect(client.issueInvoice(invoice)).rejectedWith('404 Not found')
       })
     })
 
@@ -89,11 +82,7 @@ describe('Client', () => {
           }
         })))
 
-        try {
-          await client.issueInvoice(invoice)
-        } catch (e) {
-          expect(e.message).to.be.string('Some error message from the remote service')
-        }
+        await expect(client.issueInvoice(invoice)).rejectedWith('Some error message from the remote service')
       })
     })
 
@@ -211,13 +200,9 @@ describe('Client', () => {
       })
 
       it('should throw error', async () => {
-        try {
-          const res = await client.getInvoiceData({
-            invoiceId: 'TEST-ISSUE-NUMBER'
-          })
-        } catch (e) {
-          expect(e.message).to.be.string('Hiányzó adat: számla agent xml lekérés hiba (ismeretlen számlaszám).')
-        }
+        await expect(client.getInvoiceData({
+          invoiceId: 'TEST-ISSUE-NUMBER'
+        })).rejectedWith('Hiányzó adat: számla agent xml lekérés hiba (ismeretlen számlaszám).')
       })
     })
   })
@@ -231,23 +216,19 @@ describe('Client with auth token', () => {
       tokenClient = createTokenClient(Client)
     })
 
-    it('should set _options property', done => {
+    it('should set _options property', () => {
       expect(tokenClient).to.have.property('_options').that.is.an('object')
-      done()
     })
 
-    it('should set authToken', done => {
+    it('should set authToken', () => {
       expect(tokenClient._options).to.have.property('authToken').that.is.a('string')
-      done()
     })
 
-    it('should not set user', done => {
+    it('should not set user', () => {
       expect(tokenClient._options).to.not.have.property('user')
-      done()
     })
-    it('should not set password', done => {
+    it('should not set password', () => {
       expect(tokenClient._options).to.not.have.property('password')
-      done()
     })
   })
 

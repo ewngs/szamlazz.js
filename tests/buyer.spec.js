@@ -8,18 +8,16 @@ const expect = chai.expect
 import {Buyer} from '../index.js'
 import {createBuyer} from './resources/setup.js'
 
-let buyer
-
-beforeEach(function (done) {
-  buyer = createBuyer(Buyer)
-  done()
-})
-
 describe('Buyer', function () {
+  let buyer
+
+  beforeEach(function () {
+    buyer = createBuyer(Buyer)
+  })
+
   describe('constructor', function () {
-    it('should set _options property', function (done) {
+    it('should set _options property', function () {
       expect(buyer).to.have.property('_options').that.is.an('object')
-      done()
     })
   })
 
@@ -39,59 +37,50 @@ describe('Buyer', function () {
       beforeEach(function (done) {
         parser.parseString(buyer._generateXML(), function (err, result) {
           if (!err) obj = result.vevo
+
+          done()
         })
 
-        done()
       })
 
-      it('should have `nev` property', function (done) {
+      it('should have `nev` property', function () {
         expect(obj).to.have.property('nev')
-        done()
       })
 
-      it('should have `irsz` property', function (done) {
+      it('should have `irsz` property', function () {
         expect(obj).to.have.property('irsz')
-        done()
       })
 
-      it('should have `telepules` property', function (done) {
+      it('should have `telepules` property', function () {
         expect(obj).to.have.property('telepules')
-        done()
       })
 
-      it('should have `cim` property', function (done) {
+      it('should have `cim` property', function () {
         expect(obj).to.have.property('cim')
-        done()
       })
 
-      it('should have `adoszam` property', function (done) {
+      it('should have `adoszam` property', function () {
         expect(obj).to.have.property('adoszam')
-        done()
       })
 
-      it('should have `postazasiNev` property', function (done) {
+      it('should have `postazasiNev` property', function () {
         expect(obj).to.have.property('postazasiNev')
-        done()
       })
 
-      it('should have `postazasiIrsz` property', function (done) {
+      it('should have `postazasiIrsz` property', function () {
         expect(obj).to.have.property('postazasiIrsz')
-        done()
       })
 
-      it('should have `postazasiTelepules` property', function (done) {
+      it('should have `postazasiTelepules` property', function () {
         expect(obj).to.have.property('postazasiTelepules')
-        done()
       })
 
-      it('should have `postazasiCim` property', function (done) {
+      it('should have `postazasiCim` property', function () {
         expect(obj).to.have.property('postazasiCim')
-        done()
       })
 
-      it('should have `azonosito` property', function (done) {
+      it('should have `azonosito` property', function () {
         expect(obj).to.have.property('azonosito')
-        done()
       })
     })
   })

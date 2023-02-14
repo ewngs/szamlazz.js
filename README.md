@@ -37,6 +37,7 @@ const szamlazzClient = new Client({
   requestInvoiceDownload: true, // downloads the issued pdf invoice. optional, default: false
   downloadedInvoiceCount: 1, // optional, default: 1
   responseVersion: 1 // optional, default: 1
+  timeout: 1000 // optional, default: 0, request timeout in ms (0 = no timeout)
 })
 ```
 
@@ -49,6 +50,7 @@ const szamlazzClient = new Client({
   requestInvoiceDownload: true, // downloads the issued pdf invoice. optional, default: false
   downloadedInvoiceCount: 1, // optional, default: 1
   responseVersion: 1 // optional, default: 1
+  timeout: 0 // optional, default: 0, request timeout in ms (0 = no timeout)
 })
 ```
 

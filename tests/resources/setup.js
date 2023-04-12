@@ -23,13 +23,14 @@ export function createClient(Client) {
   })
 }
 
-export function createTokenClient(Client) {
+export function createTokenClient(Client, options) {
   return new Client({
     authToken: 'AUTHTOKEN',
     eInvoice: false,
     requestInvoiceDownload: true,
     downloadedInvoiceCount: 0,
-    responseVersion: 1
+    responseVersion: 1,
+    ...options
   })
 }
 /**

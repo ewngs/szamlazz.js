@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "axios-cookiejar-support": "^1.0.1",
+    "axios-cookiejar-support": "^4.0.7",
     "form-data": "^4.0.0",
     "merge": "^2.1.1",
     "tough-cookie": "^4.0.0",

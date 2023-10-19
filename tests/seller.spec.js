@@ -19,6 +19,18 @@ describe('Seller', function () {
     it('should set _options property', function () {
       expect(seller).to.have.property('_options').that.is.an('object')
     })
+
+    it('should not mutate options', function () {
+      const seller = new Seller({})
+      const expected = {
+        _options: {
+          bank: {},
+          email: {}
+        }
+      }
+
+      expect(seller).to.be.deep.equal(expected)
+    })
   })
 
   describe('_generateXML', function () {

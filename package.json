@@ -29,8 +29,8 @@
     "nock": "^13.2.9"
   },
   "dependencies": {
-    "axios": "^0.21.1",
-    "axios-cookiejar-support": "^1.0.1",
+    "axios": "^1.6.2",
+    "http-cookie-agent": "^5.0.4",
     "form-data": "^4.0.0",
     "merge": "^2.1.1",
     "tough-cookie": "^4.0.0",

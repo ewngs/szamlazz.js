@@ -2,7 +2,7 @@
 
 import nock from 'nock'
 import {expect, use as chaiUse} from 'chai'
-import chaiAsPromised from 'chai-as-promised'
+import chaiAsPromised from '@rvagg/chai-as-promised'
 chaiUse(chaiAsPromised)
 
 import {Buyer, Client, Invoice, Item, Seller} from '../index.js'

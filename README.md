@@ -253,7 +253,3 @@ szamlazz.Languages.Italian
 szamlazz.Languages.Romanian
 szamlazz.Languages.Slovak
 ```
-
-## Development
-
-Use `npm i --legacy-peer-deps` command to install dependencies. It is needed because of the `chai-as-promised` package, does not support `chai@5` as peer-dependency.

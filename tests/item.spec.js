@@ -2,8 +2,7 @@
 
 import xml2js from 'xml2js'
 const parser = new xml2js.Parser()
-import chai from 'chai'
-const expect = chai.expect
+import {expect} from 'chai'
 
 import {Buyer, Invoice, Item, Seller} from '../index.js'
 import {createSeller, createBuyer, createSoldItemNet, createSoldItemGross, createInvoice} from './resources/setup.js'

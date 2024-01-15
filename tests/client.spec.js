@@ -1,10 +1,9 @@
 /* eslint-env mocha */
 
 import nock from 'nock'
-import chai from 'chai'
+import {expect, use as chaiUse} from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-const expect = chai.expect
-chai.use(chaiAsPromised)
+chaiUse(chaiAsPromised)
 
 import {Buyer, Client, Invoice, Item, Seller} from '../index.js'
 import {

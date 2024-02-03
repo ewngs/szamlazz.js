@@ -136,6 +136,7 @@ let invoice = new Invoice({
   buyer: buyer, // the buyer, required
   items: [ soldItem1, soldItem2 ], // the sold items, required
   prepaymentInvoice: false // prepayment/deposit invoice should be issued, optional, default: false
+  adjustmentInvoiceNumber: 'ORIGINAL-INVOICE-NUMBER', // optional, only required for creating a correcting invoice
 })
 ```
 

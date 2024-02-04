@@ -72,6 +72,60 @@ describe('Invoice', function () {
       it('should have `tetelek` node', function () {
         expect(obj).to.have.property('tetelek')
       })
-    })
-  })
-})
+    
+      // START- New test suite for adjustmentInvoiceNumber property
+      describe('adjustmentInvoiceNumber validation', function () {
+        it('should not include adjustmentInvoiceNumber when it is null', function (done) {
+          invoice._options.adjustmentInvoiceNumber = null;
+          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
+            expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitettSzamlaszam');
+            done();
+          });
+        });
+
+        it('should not include adjustmentInvoiceNumber when it is undefined', function (done) {
+          delete invoice._options.adjustmentInvoiceNumber;
+          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
+            expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitettSzamlaszam');
+            done();
+          });
+        });
+
+        it('should throw an error when adjustmentInvoiceNumber is an empty string', function () {
+          expect(() => {
+            invoice._options.adjustmentInvoiceNumber = '';
+            invoice._generateXML();
+          }).to.throw();
+        });
+
+        it('should throw an error when adjustmentInvoiceNumber is not a string', function () {
+          const invalidTypes = [new Date(), 123, true];
+          invalidTypes.forEach(type => {
+            expect(() => {
+              invoice._options.adjustmentInvoiceNumber = type;
+              invoice._generateXML();
+            }).to.throw();
+          });
+        });
+
+        it('should not throw an error when adjustmentInvoiceNumber is a non-empty string', function () {
+          expect(() => {
+          invoice._options.adjustmentInvoiceNumber = '12345';
+          invoice._generateXML();
+          }).to.not.throw();
+          });
+
+        it('should include adjustmentInvoiceNumber when it is a non-empty string', function (done) {
+          invoice._options.adjustmentInvoiceNumber = '12345';
+          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
+          expect(result.wrapper.fejlec[0].helyesbitettSzamlaszam[0]).to.equal('12345');
+          done();
+          });
+        });
+       
+      });
+      // END - New test suite for adjustmentInvoiceNumber property
+
+    });
+  });
+});

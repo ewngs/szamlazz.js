@@ -2,10 +2,11 @@
 
 import xml2js from 'xml2js'
 const parser = new xml2js.Parser()
-import {expect} from 'chai'
+import { expect } from 'chai'
 
-import {Buyer, Invoice, Item, Seller} from '../index.js'
-import {createSeller, createBuyer, createSoldItemNet, createSoldItemGross, createInvoice} from './resources/setup.js'
+import { Buyer, Invoice, Item, Seller } from '../index.js'
+import { createSeller, createBuyer, createSoldItemNet, createSoldItemGross, createInvoice } from './resources/setup.js'
+import { Currency, Language, PaymentMethod } from "../lib/Constants.js"
 
 describe('Invoice', function () {
   let seller
@@ -19,7 +20,7 @@ describe('Invoice', function () {
     buyer = createBuyer(Buyer)
     soldItem1 = createSoldItemNet(Item)
     soldItem2 = createSoldItemGross(Item)
-    invoice = createInvoice(Invoice, seller, buyer, [ soldItem1, soldItem2 ])
+    invoice = createInvoice(Invoice, seller, buyer, [soldItem1, soldItem2])
   })
 
   describe('constructor', function () {
@@ -36,7 +37,8 @@ describe('Invoice', function () {
     })
 
     it('should set items', function () {
-      expect(invoice._options).to.have.property('items').that.is.an('array')})
+      expect(invoice._options).to.have.property('items').that.is.an('array')
+    })
   })
   describe('_generateXML', function () {
     it('should return valid XML', function (done) {
@@ -72,57 +74,136 @@ describe('Invoice', function () {
       it('should have `tetelek` node', function () {
         expect(obj).to.have.property('tetelek')
       })
-    
+
       // START- New test suite for adjustmentInvoiceNumber property
       describe('adjustmentInvoiceNumber validation', function () {
         it('should not include adjustmentInvoiceNumber when it is null', function (done) {
-          invoice._options.adjustmentInvoiceNumber = null;
+          const invoice = new Invoice({
+            adjustmentInvoiceNumber: null,
+            paymentMethod: PaymentMethod.BankTransfer,
+            currency: Currency.Ft,
+            language: Language.Hungarian,
+            seller: seller,
+            buyer: buyer,
+            items: [soldItem1, soldItem2],
+          });
+
           parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
             expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitettSzamlaszam');
-            done();
+            expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitoszamla');
+            done(err);
           });
         });
 
         it('should not include adjustmentInvoiceNumber when it is undefined', function (done) {
-          delete invoice._options.adjustmentInvoiceNumber;
+          const invoice = new Invoice({
+            paymentMethod: PaymentMethod.BankTransfer,
+            currency: Currency.Ft,
+            language: Language.Hungarian,
+            seller: seller,
+            buyer: buyer,
+            items: [soldItem1, soldItem2],
+          });
+
           parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
             expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitettSzamlaszam');
-            done();
+            expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitoszamla');
+            done(err);
           });
         });
 
         it('should throw an error when adjustmentInvoiceNumber is an empty string', function () {
           expect(() => {
-            invoice._options.adjustmentInvoiceNumber = '';
+            invoice = new Invoice({
+              adjustmentInvoiceNumber: '',
+              paymentMethod: PaymentMethod.BankTransfer,
+              currency: Currency.Ft,
+              language: Language.Hungarian,
+              seller: seller,
+              buyer: buyer,
+              items: [soldItem1, soldItem2],
+            });
             invoice._generateXML();
-          }).to.throw();
+          }).to.throw(/"adjustmentInvoiceNumber" should be minimum 1 character/);
         });
 
-        it('should throw an error when adjustmentInvoiceNumber is not a string', function () {
-          const invalidTypes = [new Date(), 123, true];
-          invalidTypes.forEach(type => {
-            expect(() => {
-              invoice._options.adjustmentInvoiceNumber = type;
-              invoice._generateXML();
-            }).to.throw();
+        it('should throw an error when adjustmentInvoiceNumber is a Date object', function () {
+
+          expect(() => {
+            invoice = new Invoice({
+              paymentMethod: PaymentMethod.BankTransfer,
+              currency: Currency.Ft,
+              language: Language.Hungarian,
+              seller: seller,
+              buyer: buyer,
+              items: [soldItem1, soldItem2],
+              adjustmentInvoiceNumber: new Date()
+            });
+            invoice._generateXML();
+          }).to.throw(/"adjustmentInvoiceNumber" should be a string/);
+        });
+
+        it('should throw an error when adjustmentInvoiceNumber is a number', function () {
+          invoice = new Invoice({
+            paymentMethod: PaymentMethod.BankTransfer,
+            currency: Currency.Ft,
+            language: Language.Hungarian,
+            seller: seller,
+            buyer: buyer,
+            items: [soldItem1, soldItem2],
+            adjustmentInvoiceNumber: 123
           });
+          expect(() => {
+            invoice._generateXML();
+          }).to.throw(/"adjustmentInvoiceNumber" should be a string/);
+        });
+
+        it('should throw an error when adjustmentInvoiceNumber is a boolean', function () {
+          const invoice = new Invoice({
+            paymentMethod: PaymentMethod.BankTransfer,
+            currency: Currency.Ft,
+            language: Language.Hungarian,
+            seller: seller,
+            buyer: buyer,
+            items: [soldItem1, soldItem2],
+            adjustmentInvoiceNumber: true
+          });
+          expect(() => {
+            invoice._generateXML();
+          }).to.throw(/"adjustmentInvoiceNumber" should be a string/);
         });
 
         it('should not throw an error when adjustmentInvoiceNumber is a non-empty string', function () {
           expect(() => {
-          invoice._options.adjustmentInvoiceNumber = '12345';
-          invoice._generateXML();
+            const invoice = new Invoice({
+              paymentMethod: PaymentMethod.BankTransfer,
+              currency: Currency.Ft,
+              language: Language.Hungarian,
+              seller: seller,
+              buyer: buyer,
+              items: [soldItem1, soldItem2],
+              adjustmentInvoiceNumber: '12345'
+            });
+            invoice._generateXML();
           }).to.not.throw();
-          });
+        });
 
         it('should include adjustmentInvoiceNumber when it is a non-empty string', function (done) {
-          invoice._options.adjustmentInvoiceNumber = '12345';
+          const invoice = new Invoice({
+            paymentMethod: PaymentMethod.BankTransfer,
+            currency: Currency.Ft,
+            language: Language.Hungarian,
+            seller: seller,
+            buyer: buyer,
+            items: [soldItem1, soldItem2],
+            adjustmentInvoiceNumber: '12345'
+          });
           parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
-          expect(result.wrapper.fejlec[0].helyesbitettSzamlaszam[0]).to.equal('12345');
-          done();
+            expect(result.wrapper.fejlec[0].helyesbitettSzamlaszam[0]).to.equal('12345');
+            expect(result.wrapper.fejlec[0].helyesbitoszamla[0]).to.equal('true');
+            done(err);
           });
         });
-       
       });
       // END - New test suite for adjustmentInvoiceNumber property
 

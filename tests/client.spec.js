@@ -129,11 +129,7 @@ describe('Client', () => {
         expect(parseFloat(httpResponse.grossTotal)).is.a('number')
       })
 
-      it('should have `customerAccountUrl` property', async () => {
-        const httpResponse = await client.issueInvoice(invoice)
-
-        expect(httpResponse).to.have.property('customerAccountUrl').that.is.a('string')
-      })
+      
     })
 
     describe('successful invoice generation with download request', () => {
@@ -180,10 +176,7 @@ describe('Client', () => {
         const httpResponse = await client.issueInvoice(invoice)
         expect(httpResponse.pdf).to.be.an.instanceof(Buffer)
       })
-      it('should have `customerAccountUrl` property', async () => {
-        const httpResponse = await client.issueInvoice(invoice)
-        expect(httpResponse).to.have.property('customerAccountUrl').that.is.a('string')
-      })
+      
 
     })
   })

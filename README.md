@@ -190,7 +190,8 @@ Response
 {
   invoiceId: 'WXSKA-2020-00', // The id of the created reverse invoice
   netTotal: '1000',           // Total value of the reverse invoice excl. VAT
-  grossTotal: '1270'          // Total value of the reverse invoice incl. VAT
+  grossTotal: '1270',         // Total value of the reverse invoice incl. VAT
+  customerAccountUrl: 'https://www.szamlazz.hu/szamla/fiok/gd82embu556d2qjagzj3s2ijqeqzds4ckhuf',      // Customer account URL
   pdf: null                   // the PDF content as a Buffer if requestInvoiceDownload was true, otherwise undefined
 }
 ```

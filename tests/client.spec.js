@@ -1,11 +1,11 @@
 /* eslint-env mocha */
 
 import nock from 'nock'
-import {expect, use as chaiUse} from 'chai'
+import { expect, use as chaiUse } from 'chai'
 import chaiAsPromised from '@rvagg/chai-as-promised'
 chaiUse(chaiAsPromised)
 
-import {Buyer, Client, Invoice, Item, Seller} from '../index.js'
+import { Buyer, Client, Invoice, Item, Seller } from '../index.js'
 import {
   createClient,
   createTokenClient,
@@ -106,7 +106,8 @@ describe('Client', () => {
         expect(httpResponse).to.have.all.keys(
           'invoiceId',
           'netTotal',
-          'grossTotal'
+          'grossTotal',
+          'customerAccountUrl'
         )
       })
 
@@ -126,6 +127,12 @@ describe('Client', () => {
         const httpResponse = await client.issueInvoice(invoice)
 
         expect(parseFloat(httpResponse.grossTotal)).is.a('number')
+      })
+
+      it('should have `customerAccountUrl` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+
+        expect(httpResponse).to.have.property('customerAccountUrl').that.is.a('string')
       })
     })
 
@@ -149,6 +156,7 @@ describe('Client', () => {
           'invoiceId',
           'netTotal',
           'grossTotal',
+          'customerAccountUrl',
           'pdf'
         )
       })
@@ -172,6 +180,11 @@ describe('Client', () => {
         const httpResponse = await client.issueInvoice(invoice)
         expect(httpResponse.pdf).to.be.an.instanceof(Buffer)
       })
+      it('should have `customerAccountUrl` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+        expect(httpResponse).to.have.property('customerAccountUrl').that.is.a('string')
+      })
+
     })
   })
 

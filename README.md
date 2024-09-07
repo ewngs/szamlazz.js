@@ -149,6 +149,17 @@ if (result.pdf) {
 }
 ```
 
+Response
+```javascript
+{
+  invoiceId: 'WXSKA-2020-00', // The id of the created  invoice
+  netTotal: '1000',           // Total value of the  invoice excl. VAT
+  grossTotal: '1270',         // Total value of the  invoice incl. VAT
+  customerAccountUrl: 'https://www.szamlazz.hu/szamla/fiok/gd82embu556d2qjagzj3s2ijqeqzds4ckhuf',      // Customer account URL if the customer has an account otherwise undefined
+  pdf: null                   // the PDF content as a Buffer if requestInvoiceDownload was true, otherwise undefined
+}
+```
+
 ### Get invoice data
 
 You can get the data of a previously issued invoice:
@@ -191,7 +202,7 @@ Response
   invoiceId: 'WXSKA-2020-00', // The id of the created reverse invoice
   netTotal: '1000',           // Total value of the reverse invoice excl. VAT
   grossTotal: '1270',         // Total value of the reverse invoice incl. VAT
-  customerAccountUrl: 'https://www.szamlazz.hu/szamla/fiok/gd82embu556d2qjagzj3s2ijqeqzds4ckhuf',      // Customer account URL
+  customerAccountUrl: 'https://www.szamlazz.hu/szamla/fiok/gd82embu556d2qjagzj3s2ijqeqzds4ckhuf',      // Customer account URL if the customer has an account otherwise undefined
   pdf: null                   // the PDF content as a Buffer if requestInvoiceDownload was true, otherwise undefined
 }
 ```

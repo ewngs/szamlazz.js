@@ -139,7 +139,7 @@ describe('Client', () => {
 
       it('should have `customerAccountUrl` property', async () => {
         const httpResponse = await client.issueInvoice(invoice)
-        expect(httpResponse).to.have.property('customerAccountUrl').that.is.satisfies((value) => typeof value === 'string' || value === undefined);
+        expect(httpResponse.customerAccountUrl).to.be.equals('https://www.szamlazz.hu/szamla/fiok/gd82embu556d2qjagzj3s2ijqeqzds4ckhuf')
       })
 
       

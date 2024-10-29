@@ -207,6 +207,77 @@ describe('Invoice', function () {
       });
       // END - New test suite for adjustmentInvoiceNumber property
 
+      describe('NAV reporting', function () {
+        it('should not include noNavReport when it is null.', function (done) {
+          const invoice = new Invoice({
+            noNavReport: null,
+            paymentMethod: PaymentMethod.BankTransfer,
+            currency: Currency.Ft,
+            language: Language.Hungarian,
+            seller: seller,
+            buyer: buyer,
+            items: [soldItem1, soldItem2],
+          });
+
+          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
+            expect(result.wrapper).to.not.have.deep.property('fejlec.eusAfa');
+            done(err);
+          });
+        });
+
+        it('should not include noNavReport when it is undefined.', function (done) {
+          const invoice = new Invoice({
+            noNavReport: undefined,
+            paymentMethod: PaymentMethod.BankTransfer,
+            currency: Currency.Ft,
+            language: Language.Hungarian,
+            seller: seller,
+            buyer: buyer,
+            items: [soldItem1, soldItem2],
+          });
+
+          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
+            expect(result.wrapper).to.not.have.deep.property('fejlec.eusAfa');
+            done(err);
+          });
+        });
+
+        it('should set eusAfa to true when noNavReport = true', function (done) {
+          const invoice = new Invoice({
+            noNavReport: true,
+            paymentMethod: PaymentMethod.BankTransfer,
+            currency: Currency.Ft,
+            language: Language.Hungarian,
+            seller: seller,
+            buyer: buyer,
+            items: [soldItem1, soldItem2],
+          });
+
+          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
+            // it returns with string true because the xml parser parse it as string
+            expect(result.wrapper.fejlec[0].eusAfa).to.deep.equal(['true']);
+            done(err);
+          });
+        });
+
+        it('should set eusAfa to false when noNavReport = false', function (done) {
+          const invoice = new Invoice({
+            noNavReport: false,
+            paymentMethod: PaymentMethod.BankTransfer,
+            currency: Currency.Ft,
+            language: Language.Hungarian,
+            seller: seller,
+            buyer: buyer,
+            items: [soldItem1, soldItem2],
+          });
+
+          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
+            // it returns with string true because the xml parser parse it as string
+            expect(result.wrapper.fejlec[0].eusAfa).to.deep.equal(['false']);
+            done(err);
+          });
+        });
+      })
     });
   });
 });

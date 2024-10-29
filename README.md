@@ -36,7 +36,7 @@ const szamlazzClient = new Client({
   eInvoice: false, // create e-invoice. optional, default: false
   requestInvoiceDownload: true, // downloads the issued pdf invoice. optional, default: false
   downloadedInvoiceCount: 1, // optional, default: 1
-  responseVersion: 1 // optional, default: 1
+  responseVersion: 1, // optional, default: 1
   timeout: 1000 // optional, default: 0, request timeout in ms (0 = no timeout)
 })
 ```
@@ -49,7 +49,7 @@ const szamlazzClient = new Client({
   eInvoice: false, // create e-invoice. optional, default: false
   requestInvoiceDownload: true, // downloads the issued pdf invoice. optional, default: false
   downloadedInvoiceCount: 1, // optional, default: 1
-  responseVersion: 1 // optional, default: 1
+  responseVersion: 1, // optional, default: 1
   timeout: 0 // optional, default: 0, request timeout in ms (0 = no timeout)
 })
 ```
@@ -135,7 +135,11 @@ let invoice = new Invoice({
   seller: seller, // the seller, required
   buyer: buyer, // the buyer, required
   items: [ soldItem1, soldItem2 ], // the sold items, required
-  prepaymentInvoice: false // prepayment/deposit invoice should be issued, optional, default: false
+  // The noNavReport field explicitly manages the szamlazz.hu report on invoices sending to NAV or not.
+  // By default is undefined so szamlazz.hu decides to report to NAV or not
+  // If true then szammlazz.hu does not send the invoice to NAV  
+  noNavReport: undefined, 
+  prepaymentInvoice: false, // prepayment/deposit invoice should be issued, optional, default: false
   adjustmentInvoiceNumber: 'ORIGINAL-INVOICE-NUMBER', // optional, only required for creating a correcting invoice
 })
 ```

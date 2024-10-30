@@ -96,6 +96,21 @@ export function createSoldItemNet(Item) {
 }
 
 /**
+ * Create sold item with net price 0
+ * @return {Item}
+ */
+export function createSoldItemNetZero(Item) {
+  return new Item({
+    label: 'First item',
+    quantity: 2,
+    unit: 'qt',
+    vat: 27, // can be a number or a special string
+    netUnitPrice: 0, // calculates gross and net values from per item net
+    comment: 'An item'
+  })
+}
+
+/**
  * Create sold item with gross price
  * @return {Item}
  */
@@ -106,6 +121,20 @@ export function createSoldItemGross(Item) {
     unit: 'qt',
     vat: 27,
     grossUnitPrice: 1270 // calculates net and total values from per item gross
+  })
+}
+
+/**
+ * Create sold item with gross price 0
+ * @return {Item}
+ */
+export function createSoldItemGrossZero(Item) {
+  return new Item({
+    label: 'Second item',
+    quantity: 5,
+    unit: 'qt',
+    vat: 27,
+    grossUnitPrice: 0 // calculates net and total values from per item gross
   })
 }
 

@@ -5,13 +5,15 @@ const parser = new xml2js.Parser()
 import {expect} from 'chai'
 
 import {Buyer, Invoice, Item, Seller} from '../index.js'
-import {createSeller, createBuyer, createSoldItemNet, createSoldItemGross, createInvoice} from './resources/setup.js'
+import {createSeller, createBuyer, createSoldItemNet, createSoldItemGross, createInvoice, createSoldItemNetZero, createSoldItemGrossZero} from './resources/setup.js'
 
 describe('Item', function () {
 
   let seller
   let buyer
   let soldItem1
+  let soldItem1ZeroNetPrice
+  let soldItem1ZeroGrossPrice
   let soldItem2
   let invoice
 
@@ -19,6 +21,8 @@ describe('Item', function () {
     seller = createSeller(Seller)
     buyer = createBuyer(Buyer)
     soldItem1 = createSoldItemNet(Item)
+    soldItem1ZeroNetPrice = createSoldItemNetZero(Item)
+    soldItem1ZeroGrossPrice = createSoldItemGrossZero(Item)
     soldItem2 = createSoldItemGross(Item)
     invoice = createInvoice(Invoice, seller, buyer, [ soldItem1, soldItem2 ])
   })
@@ -52,6 +56,14 @@ describe('Item', function () {
     it('should set netUnitPrice or grossUnitPrice', function (done) {
       let price = soldItem1._options.netUnitPrice || soldItem1._options.grossUnitPrice
       expect(price).is.a('number')
+      done()
+    })
+
+    it('should set netUnitPrice or grossUnitPrice to 0', function (done) {
+      let netUnitPriceZero = soldItem1ZeroNetPrice._options.netUnitPrice;
+      let grossUnitPriceZero = soldItem1ZeroGrossPrice._options.grossUnitPrice;
+      expect(netUnitPriceZero).is.a('number').to.equal(0)
+      expect(grossUnitPriceZero).is.a('number').to.equal(0)
       done()
     })
   })

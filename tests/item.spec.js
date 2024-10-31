@@ -58,22 +58,20 @@ describe('Item', function () {
       expect(price).is.a('number')
       done()
     })
-
-    it('should set netUnitPrice or grossUnitPrice to 0', function (done) {
-      let netUnitPriceZero = soldItem1ZeroNetPrice._options.netUnitPrice;
-      let grossUnitPriceZero = soldItem1ZeroGrossPrice._options.grossUnitPrice;
-      expect(netUnitPriceZero).is.a('number').to.equal(0)
-      expect(grossUnitPriceZero).is.a('number').to.equal(0)
-      done()
-    })
   })
-
+  
   describe('_generateXML', function () {
     it('should calculate netUnitPrice', function (done) {
       expect(soldItem1._options).to.have.property('netUnitPrice').that.is.a('number')
       done()
     })
 
+    it('should set netUnitPrice or grossUnitPrice to 0', function (done) {
+      expect(soldItem1ZeroNetPrice._options).to.have.property('netUnitPrice').that.is.a('number').to.equal(0)
+      expect(soldItem1ZeroGrossPrice._options).to.have.property('grossUnitPrice').that.is.a('number').to.equal(0)
+      done()
+    })
+    
     it('should calculate vatValue', function (done) {
       expect(soldItem1._options).to.have.property('vatValue').that.is.a('number')
       done()

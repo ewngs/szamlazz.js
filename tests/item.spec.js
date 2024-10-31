@@ -5,7 +5,7 @@ const parser = new xml2js.Parser()
 import {expect} from 'chai'
 
 import {Buyer, Invoice, Item, Seller} from '../index.js'
-import {createSeller, createBuyer, createSoldItemNet, createSoldItemGross, createInvoice, createSoldItemNetZero, createSoldItemGrossZero} from './resources/setup.js'
+import {createSeller, createBuyer, createSoldItemNet, createSoldItemGross, createInvoice} from './resources/setup.js'
 
 describe('Item', function () {
 

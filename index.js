@@ -4,5 +4,6 @@ import {Currencies, Currency, Language, Languages, PaymentMethod, PaymentMethods
 import {Invoice} from './lib/Invoice.js'
 import {Item} from './lib/Item.js'
 import {Seller} from './lib/Seller.js'
+import {CreditEntry} from './lib/CreditEntry.js'
 
-export {Buyer, Client, Invoice, Item, Seller, Currencies, Currency, Language, Languages, PaymentMethod, PaymentMethods, TaxSubject, TaxSubjects}
+export {Buyer, Client, Invoice, Item, Seller, Currencies, Currency, Language, Languages, PaymentMethod, PaymentMethods, TaxSubject, TaxSubjects, CreditEntry}

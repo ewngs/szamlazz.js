@@ -24,7 +24,8 @@ import {
   PaymentMethod,
   PaymentMethods,
   TaxSubject,
-  TaxSubjects} from 'szamlazz.js'
+  TaxSubjects,
+  CreditEntry} from 'szamlazz.js'
 ```
 
 ### Create a client
@@ -120,6 +121,18 @@ let soldItem2 = new Item({
   unit: 'qt',
   vat: 27,
   grossUnitPrice: 1270 // calculates net and total values from per item gross
+})
+```
+
+### Create a credit entry
+
+With net unit price:
+```javascript
+let creditEntry = new CreditEntry({
+  amount: 1000,
+  paymentMethod: PaymentMethods.BankTransfer,
+  description: '', // Default is mempty
+  date: new Date() // Default is current date
 })
 ```
 
@@ -240,6 +253,35 @@ Response
     publicPlaceCategory: 'UTCA',
     number: '1.'
   }
+}
+```
+
+### Registering credit entry
+
+You can use this interface to record a credit (deposit) to an invoice you have previously created. Basically you can use this to mark an invoice as paid.
+
+```javascript
+const szamlazzClient = new Client({
+  authToken: 'SZAMLAAGENTKEY',
+})
+
+const creditEntry = new CreditEntry({
+  amount: 1000
+});
+
+const creditEntryResponse = await szamlazzClient.registerCreditEntry({
+  invoiceId: 'WXSKA-2020-00',
+  additive: true, // Default is true
+  taxNumber: '' // Default is empty
+}, [creditEntry])
+```
+
+Response
+```javascript
+{
+  invoiceId: 'WXSKA-2020-00', // The id of the created  invoice
+  netTotal: '1000',           // Total value of the  invoice excl. VAT
+  grossTotal: '1270',         // Total value of the  invoice incl. VAT
 }
 ```
 

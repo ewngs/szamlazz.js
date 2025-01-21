@@ -5,7 +5,7 @@ import { expect, use as chaiUse } from 'chai'
 import chaiAsPromised from '@rvagg/chai-as-promised'
 chaiUse(chaiAsPromised)
 
-import { Buyer, Client, Invoice, Item, Seller } from '../index.js'
+import { Buyer, Client, Invoice, Item, Seller, CreditEntry } from '../index.js'
 import {
   createClient,
   createTokenClient,
@@ -14,6 +14,7 @@ import {
   createSoldItemNet,
   createSoldItemGross,
   createInvoice,
+  createCreditEntry,
   RESPONSE_FILE_PATHS
 } from './resources/setup.js'
 
@@ -26,6 +27,8 @@ describe('Client', () => {
   let soldItem2
   let invoice
   let reversalRequest
+  let creditEntry
+  let creditEntryOptions
 
   before(() => {
     nock.disableNetConnect()
@@ -43,6 +46,12 @@ describe('Client', () => {
       invoiceId: 'E-RNJLO-2019-1234',  
       eInvoice: true,                  
       requestInvoiceDownload: false,   
+    }
+    creditEntry = createCreditEntry(CreditEntry)
+    creditEntryOptions = {
+      invoiceId: 'E-RNJLO-2019-1234',
+      additiv: true,
+      taxNumber: ''
     }
   })
 
@@ -326,6 +335,63 @@ describe('Client', () => {
     });
   
   })
+
+  describe('registerCreditEntry', () => {
+    describe('HTTP status', () => {
+      it('should handle failed requests', async () => {
+        nock('https://www.szamlazz.hu')
+          .post('/szamla/')
+          .reply(404)
+
+        await expect(client.registerCreditEntry(creditEntryOptions, [creditEntry])).rejectedWith('Request failed with status code 404')
+        nock.isDone()
+      })
+    })
+
+    describe('successful credit entry registration', () => {
+      beforeEach(() => {
+        nock('https://www.szamlazz.hu')
+          .post('/szamla/')
+          .replyWithFile(200, RESPONSE_FILE_PATHS.SUCCESS_WITHOUT_PDF, {
+            szlahu_bruttovegosszeg: '6605',
+            szlahu_nettovegosszeg: '5201',
+            szlahu_szamlaszam: '2016-139',
+            szlahu_vevoifiokurl: 'https://www.szamlazz.hu/szamla/fiok/gd82embu556d2qjagzj3s2ijqeqzds4ckhuf',
+
+          })
+      })
+
+      it('should have result parameter', async () => {
+        const httpResponse = await client.registerCreditEntry(creditEntryOptions, [creditEntry])
+        expect(httpResponse).to.have.all.keys(
+          'invoiceId',
+          'netTotal',
+          'grossTotal'
+        )
+      })
+
+      it('should have `invoiceId` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+
+        expect(httpResponse).to.have.property('invoiceId').that.is.a('string')
+      })
+
+      it('should have `netTotal` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+
+        expect(parseFloat(httpResponse.netTotal)).is.a('number')
+      })
+
+      it('should have `grossTotal` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+
+        expect(parseFloat(httpResponse.grossTotal)).is.a('number')
+      })
+      
+    })
+
+  })
+
 })
 
 describe('Client with auth token', () => {

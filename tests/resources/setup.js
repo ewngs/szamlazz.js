@@ -126,3 +126,17 @@ export function createInvoice(Invoice, seller, buyer, items) {
     items
   })
 }
+
+/**
+ * Create credit entry
+ * Optional and can be used to override the default data.
+ * @return {CreditEntry}
+ */
+export function createCreditEntry(CreditEntry) {
+  return new CreditEntry({
+    paymentMethod: PaymentMethod.BankTransfer,
+    amount: 1000,
+    date: new Date(),
+    description: 'optional description'
+  })
+}

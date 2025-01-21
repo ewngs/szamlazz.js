@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<QueryTaxpayerResponse >
+	<taxpayerValidity>true</taxpayerValidity>
+	<taxpayerData>
+		<taxpayerName>taxpayerName</taxpayerName>
+		<taxpayerShortName>taxpayerShortName</taxpayerShortName>
+		<taxNumberDetail>
+			<ns2:taxpayerId>12345678</ns2:taxpayerId>
+			<ns2:vatCode>2</ns2:vatCode>
+			<ns2:countyCode>41</ns2:countyCode>
+		</taxNumberDetail>
+		<incorporation>ORGANIZATION</incorporation>
+		<taxpayerAddressList>
+			<taxpayerAddressItem>
+				<taxpayerAddressType>HQ</taxpayerAddressType>
+				<taxpayerAddress>
+					<ns2:countryCode>HU</ns2:countryCode>
+					<ns2:postalCode>1000</ns2:postalCode>
+					<ns2:city>BUDAPEST</ns2:city>
+					<ns2:streetName>TESZT</ns2:streetName>
+					<ns2:publicPlaceCategory>UTCA</ns2:publicPlaceCategory>
+					<ns2:number>1.</ns2:number>
+				</taxpayerAddress>
+			</taxpayerAddressItem>
+		</taxpayerAddressList>
+	</taxpayerData>
+</QueryTaxpayerResponse>

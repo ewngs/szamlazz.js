@@ -5,7 +5,9 @@ import {Currency, Language, PaymentMethod, TaxSubjects} from "../../lib/Constant
 export const RESPONSE_FILE_PATHS = Object.freeze({
   SUCCESS_WITH_PDF: join(import.meta.url, 'success_with_pdf.xml'),
   SUCCESS_WITHOUT_PDF: join(import.meta.url, 'success_without_pdf.xml'),
-  UNKNOWN_INVOICE_NUMBER: join(import.meta.url, 'unknown_invoice_number.xml')
+  UNKNOWN_INVOICE_NUMBER: join(import.meta.url, 'unknown_invoice_number.xml'),
+  INVALID_TAXPAYER: join(import.meta.url, 'invalid_taxpayer.xml'),
+  VALID_TAXPAYER: join(import.meta.url, 'valid_taxpayer.xml')
 })
 
 /**

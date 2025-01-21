@@ -261,7 +261,6 @@ describe('Client', () => {
 
   })
 
-
   describe('getInvoiceData', () => {
     describe('unsuccessful invoice generation', () => {
       beforeEach(() => {
@@ -278,6 +277,54 @@ describe('Client', () => {
         })).rejectedWith('Hiányzó adat: számla agent xml lekérés hiba (ismeretlen számlaszám).')
       })
     })
+  })
+
+  describe('queryTaxPayer', () => {
+    describe('when the taxpayer ID is invalid', () => {
+      beforeEach(() => {
+        nock('https://www.szamlazz.hu')
+          .post('/szamla/')
+          .replyWithFile(200, RESPONSE_FILE_PATHS.INVALID_TAXPAYER);
+      });
+  
+      it('should return taxpayerValidity as false', async () => {
+        const result = await client.queryTaxPayer(12345678);
+        
+        expect(result).to.deep.equal({
+          taxpayerValidity: false,
+        });
+      });
+    });
+
+    describe('when the taxpayer ID is valid', () => {
+      beforeEach(() => {
+        nock('https://www.szamlazz.hu')
+          .post('/szamla/')
+          .replyWithFile(200, RESPONSE_FILE_PATHS.VALID_TAXPAYER);
+      });
+  
+      it('should return correct taxpayer details', async () => {
+        const result = await client.queryTaxPayer(12345678);
+  
+        expect(result).to.deep.equal({
+          taxpayerValidity: true,
+          taxpayerId: '12345678',
+          vatCode: '2',
+          countyCode: '41',
+          taxpayerName: 'taxpayerName',
+          taxpayerShortName: 'taxpayerShortName',
+          address: {
+            countryCode: 'HU',
+            postalCode: '1000',
+            city: 'BUDAPEST',
+            streetName: 'TESZT',
+            publicPlaceCategory: 'UTCA',
+            number: '1.'
+          },
+        });
+      });
+    });
+  
   })
 })
 

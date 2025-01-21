@@ -211,6 +211,38 @@ Response
 }
 ```
 
+### Query tax payer
+
+Through this interface, it is possible to query the correctness of a given tax number and the taxpayer's details. The response always matches the QueryTaxPayerResponse type of Online Invoice Platform of NAV, the Hungarian National Tax and Customs Administration.
+
+```javascript
+const szamlazzClient = new Client({
+  authToken: 'SZAMLAAGENTKEY',
+})
+
+const taxPayer = await szamlazzClient.queryTaxPayer(12345678) //8 digit taxpayerId
+```
+
+Response
+```javascript
+{
+  taxpayerValidity: true,
+  taxpayerId: '12345678',
+  vatCode: '2',
+  countyCode: '41',
+  taxpayerName: 'taxpayerName KERESKEDELMI ÉS SZOLGÁLTATÓ KORLÁTOLT FELELŐSSÉGŰ TÁRSASÁG',
+  taxpayerShortName: 'taxpayerName KFT.',
+  address: {
+    countryCode: 'HU',
+    postalCode: '1000',
+    city: 'BUDAPEST',
+    streetName: 'TESZT',
+    publicPlaceCategory: 'UTCA',
+    number: '1.'
+  }
+}
+```
+
 ## Constants
 
 ### PaymentMethod

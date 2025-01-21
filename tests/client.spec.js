@@ -355,9 +355,7 @@ describe('Client', () => {
           .replyWithFile(200, RESPONSE_FILE_PATHS.SUCCESS_WITHOUT_PDF, {
             szlahu_bruttovegosszeg: '6605',
             szlahu_nettovegosszeg: '5201',
-            szlahu_szamlaszam: '2016-139',
-            szlahu_vevoifiokurl: 'https://www.szamlazz.hu/szamla/fiok/gd82embu556d2qjagzj3s2ijqeqzds4ckhuf',
-
+            szlahu_szamlaszam: '2016-139'
           })
       })
 

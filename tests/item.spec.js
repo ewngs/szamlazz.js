@@ -1,10 +1,10 @@
 /* eslint-env mocha */
 
 import xml2js from 'xml2js'
-const parser = new xml2js.Parser()
 import {expect} from 'chai'
 
 import {Buyer, Invoice, Item, Seller} from '../index.js'
+import {SPECIAL_VATS} from '../lib/Item.js'
 import {createSeller, createBuyer, createSoldItemNet, createSoldItemGross, createInvoice} from './resources/setup.js'
 
 describe('Item', function () {
@@ -55,14 +55,14 @@ describe('Item', function () {
       done()
     })
   })
-  
+
   describe('_generateXML', function () {
     it('should calculate netUnitPrice', function (done) {
       expect(soldItem1._options).to.have.property('netUnitPrice').that.is.a('number')
       done()
     })
 
-    it ('should support 0 net unit price', function (done) {
+    it ('should support 0 net unit price', async function () {
       const item = new Item({
         label: 'First item',
         quantity: 2,
@@ -71,25 +71,19 @@ describe('Item', function () {
         netUnitPrice: 0, // calculates net values from per item net
         comment: 'An item'
       })
-    
+
       const xml = item._generateXML(null, invoice._options.currency)
-      parser.parseString('<wrapper>' + xml + '</wrapper>', function (err, result) {
-        if (err) {
-          return done(err)
-        }
-    
-        const tetel = result.wrapper.tetel[0]
-        // use '0' string comparison because the xml parses elements as string
-        expect(tetel.nettoEgysegar).to.deep.equal(['0'])
-        expect(tetel.nettoErtek).to.deep.equal(['0'])
-        expect(tetel.bruttoErtek).to.deep.equal(['0'])
-        expect(tetel.afaErtek).to.deep.equal(['0'])
-    
-        done()
-      })
+      const result = await xml2js.parseStringPromise('<wrapper>' + xml + '</wrapper>')
+
+      const tetel = result.wrapper.tetel[0]
+      // use '0' string comparison because the xml parses elements as string
+      expect(tetel.nettoEgysegar).to.deep.equal(['0'])
+      expect(tetel.nettoErtek).to.deep.equal(['0'])
+      expect(tetel.bruttoErtek).to.deep.equal(['0'])
+      expect(tetel.afaErtek).to.deep.equal(['0'])
     })
 
-    it ('should support 0 gross unit price', function (done) {
+    it ('should support 0 gross unit price', async function () {
       const item = new Item({
         label: 'First item',
         quantity: 2,
@@ -98,26 +92,20 @@ describe('Item', function () {
         grossUnitPrice: 0, // calculates gross values from per item net
         comment: 'An item'
       })
-    
+
       const xml = item._generateXML(null, invoice._options.currency)
-      parser.parseString('<wrapper>' + xml + '</wrapper>', function (err, result) {
-        if (err) {
-          return done(err)
-        }
-    
-        const tetel = result.wrapper.tetel[0]
-        // use '0' string comparison because the xml parses elements as string
-        expect(tetel.nettoEgysegar).to.deep.equal(['0'])
-        expect(tetel.nettoErtek).to.deep.equal(['0'])
-        expect(tetel.bruttoErtek).to.deep.equal(['0'])
-        expect(tetel.afaErtek).to.deep.equal(['0'])
-    
-        done()
-      })
+      const result = await xml2js.parseStringPromise('<wrapper>' + xml + '</wrapper>')
+
+      const tetel = result.wrapper.tetel[0]
+      // use '0' string comparison because the xml parses elements as string
+      expect(tetel.nettoEgysegar).to.deep.equal(['0'])
+      expect(tetel.nettoErtek).to.deep.equal(['0'])
+      expect(tetel.bruttoErtek).to.deep.equal(['0'])
+      expect(tetel.afaErtek).to.deep.equal(['0'])
     })
 
-    it ('should support 0 net unit price in case of special vat', function (done) {
-      ['TAM', 'AAM', 'EU', 'EUK', 'MAA', 'ÁKK', 'TEHK', 'HO', 'KBAET'].forEach(function (specialVat) {
+    it ('should support 0 net unit price in case of special vat', async function () {
+      for (const specialVat of SPECIAL_VATS) {
         const item = new Item({
           label: 'First item',
           quantity: 2,
@@ -126,26 +114,21 @@ describe('Item', function () {
           netUnitPrice: 0, // calculates net values from per item net
           comment: 'An item'
         })
-      
+
         const xml = item._generateXML(null, invoice._options.currency)
-        parser.parseString('<wrapper>' + xml + '</wrapper>', function (err, result) {
-          if (err) {
-            return done(err)
-          }
-      
-          const tetel = result.wrapper.tetel[0]
-          // use '0' string comparison because the xml parses elements as string
-          expect(tetel.nettoEgysegar).to.deep.equal(['0'])
-          expect(tetel.nettoErtek).to.deep.equal(['0'])
-          expect(tetel.bruttoErtek).to.deep.equal(['0'])
-          expect(tetel.afaErtek).to.deep.equal(['0'])
-      })
-    })
-    done()
+        const result = await xml2js.parseStringPromise('<wrapper>' + xml + '</wrapper>')
+
+        const tetel = result.wrapper.tetel[0]
+        // use '0' string comparison because the xml parses elements as string
+        expect(tetel.nettoEgysegar).to.deep.equal(['0'])
+        expect(tetel.nettoErtek).to.deep.equal(['0'])
+        expect(tetel.bruttoErtek).to.deep.equal(['0'])
+        expect(tetel.afaErtek).to.deep.equal(['0'])
+      }
     })
 
-    it ('should support 0 gross unit price in case of special vat', function (done) {
-      ['TAM', 'AAM', 'EU', 'EUK', 'MAA', 'ÁKK', 'TEHK', 'HO', 'KBAET'].forEach(function (specialVat) {
+    it ('should support 0 gross unit price in case of special vat', async function () {
+      for (const specialVat of SPECIAL_VATS) {
         const item = new Item({
           label: 'First item',
           quantity: 2,
@@ -154,47 +137,35 @@ describe('Item', function () {
           grossUnitPrice: 0, // calculates gross values from per item net
           comment: 'An item'
         })
-      
+
         const xml = item._generateXML(null, invoice._options.currency)
-        parser.parseString('<wrapper>' + xml + '</wrapper>', function (err, result) {
-          if (err) {
-            return done(err)
-          }
-      
-          const tetel = result.wrapper.tetel[0]
-          // use '0' string comparison because the xml parses elements as string
-          expect(tetel.nettoEgysegar).to.deep.equal(['0'])
-          expect(tetel.nettoErtek).to.deep.equal(['0'])
-          expect(tetel.bruttoErtek).to.deep.equal(['0'])
-          expect(tetel.afaErtek).to.deep.equal(['0'])
-      })
+        const result = await xml2js.parseStringPromise('<wrapper>' + xml + '</wrapper>')
+
+        const tetel = result.wrapper.tetel[0]
+        // use '0' string comparison because the xml parses elements as string
+        expect(tetel.nettoEgysegar).to.deep.equal(['0'])
+        expect(tetel.nettoErtek).to.deep.equal(['0'])
+        expect(tetel.bruttoErtek).to.deep.equal(['0'])
+        expect(tetel.afaErtek).to.deep.equal(['0'])
+      }
     })
-    done()
-    })
-    
+
     it('should calculate vatValue', function (done) {
       expect(soldItem1._options).to.have.property('vatValue').that.is.a('number')
       done()
     })
 
-    it('should return valid XML', function (done) {
-      parser.parseString(soldItem1._generateXML(null, invoice._options.currency), function (err, result) {
-        if (!err) {
-          expect(result).to.have.property('tetel').that.is.an('object')
-          done()
-        }
-      })
+    it('should return valid XML', async function () {
+      const result = await xml2js.parseStringPromise(soldItem1._generateXML(null, invoice._options.currency))
+      expect(result).to.have.property('tetel').that.is.an('object')
     })
 
     describe('generated XML', function () {
       let obj
 
-      beforeEach(function (done) {
-        parser.parseString(soldItem1._generateXML(null, invoice._options.currency), function (err, result) {
-          if (!err) obj = result.tetel
-        })
-
-        done()
+      beforeEach(async function () {
+        const result = await xml2js.parseStringPromise(soldItem1._generateXML(null, invoice._options.currency))
+        obj = result.tetel
       })
 
       it('should have `megnevezes` property', function (done) {

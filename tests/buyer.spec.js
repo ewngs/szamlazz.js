@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 
 import xml2js from 'xml2js'
-const parser = new xml2js.Parser()
 import { expect } from 'chai'
 
 import {Buyer} from '../index.js'
@@ -21,25 +20,18 @@ describe('Buyer', function () {
   })
 
   describe('_generateXML', function () {
-    it('should return valid XML', function (done) {
-      parser.parseString(buyer._generateXML(), function (err, result) {
-        if (!err) {
-          expect(result).to.have.property('vevo').that.is.an('object')
-          done()
-        }
-      })
+    it('should return valid XML', async function () {
+      const result = await xml2js.parseStringPromise(buyer._generateXML())
+
+      expect(result).to.have.property('vevo').that.is.an('object')
     })
 
     describe('generated XML', function () {
       let obj
 
-      beforeEach(function (done) {
-        parser.parseString(buyer._generateXML(), function (err, result) {
-          if (!err) obj = result.vevo
-
-          done()
-        })
-
+      beforeEach(async function () {
+        const result = await xml2js.parseStringPromise(buyer._generateXML())
+        obj = result.vevo
       })
 
       it('should have `nev` property', function () {

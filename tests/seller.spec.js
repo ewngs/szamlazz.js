@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 
 import xml2js from 'xml2js'
-const parser = new xml2js.Parser()
 import {expect} from 'chai'
 
 import {Seller} from '../index.js'
@@ -33,11 +32,10 @@ describe('Seller', function () {
   })
 
   describe('_generateXML', function () {
-    it('should return valid XML', function (done) {
-      parser.parseString(seller._generateXML(), function (err, result) {
-        expect(result).to.have.property('elado').that.is.an('object')
-        done()
-      })
+    it('should return valid XML', async function () {
+      const result = await xml2js.parseStringPromise(seller._generateXML())
+
+      expect(result).to.have.property('elado').that.is.an('object')
     })
   })
 })

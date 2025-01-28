@@ -5,7 +5,7 @@ import { expect } from 'chai'
 
 import { Buyer, Invoice, Item, Seller } from '../index.js'
 import { createSeller, createBuyer, createSoldItemNet, createSoldItemGross, createInvoice } from './resources/setup.js'
-import { Currency, Language, PaymentMethod } from "../lib/Constants.js"
+import { Currencies, Languages, PaymentMethods } from "../lib/Constants.js"
 
 describe('Invoice', function () {
   let seller
@@ -76,9 +76,9 @@ describe('Invoice', function () {
         it('should not include adjustmentInvoiceNumber when it is null', async function () {
           const invoice = new Invoice({
             adjustmentInvoiceNumber: null,
-            paymentMethod: PaymentMethod.BankTransfer,
-            currency: Currency.Ft,
-            language: Language.Hungarian,
+            paymentMethod: PaymentMethods.BankTransfer,
+            currency: Currencies.Ft,
+            language: Languages.Hungarian,
             seller: seller,
             buyer: buyer,
             items: [soldItem1, soldItem2],
@@ -92,9 +92,9 @@ describe('Invoice', function () {
 
         it('should not include adjustmentInvoiceNumber when it is undefined', async function () {
           const invoice = new Invoice({
-            paymentMethod: PaymentMethod.BankTransfer,
-            currency: Currency.Ft,
-            language: Language.Hungarian,
+            paymentMethod: PaymentMethods.BankTransfer,
+            currency: Currencies.Ft,
+            language: Languages.Hungarian,
             seller: seller,
             buyer: buyer,
             items: [soldItem1, soldItem2],
@@ -110,9 +110,9 @@ describe('Invoice', function () {
           expect(() => {
             invoice = new Invoice({
               adjustmentInvoiceNumber: '',
-              paymentMethod: PaymentMethod.BankTransfer,
-              currency: Currency.Ft,
-              language: Language.Hungarian,
+              paymentMethod: PaymentMethods.BankTransfer,
+              currency: Currencies.Ft,
+              language: Languages.Hungarian,
               seller: seller,
               buyer: buyer,
               items: [soldItem1, soldItem2],
@@ -125,9 +125,9 @@ describe('Invoice', function () {
 
           expect(() => {
             invoice = new Invoice({
-              paymentMethod: PaymentMethod.BankTransfer,
-              currency: Currency.Ft,
-              language: Language.Hungarian,
+              paymentMethod: PaymentMethods.BankTransfer,
+              currency: Currencies.Ft,
+              language: Languages.Hungarian,
               seller: seller,
               buyer: buyer,
               items: [soldItem1, soldItem2],
@@ -139,9 +139,9 @@ describe('Invoice', function () {
 
         it('should throw an error when adjustmentInvoiceNumber is a number', function () {
           invoice = new Invoice({
-            paymentMethod: PaymentMethod.BankTransfer,
-            currency: Currency.Ft,
-            language: Language.Hungarian,
+            paymentMethod: PaymentMethods.BankTransfer,
+            currency: Currencies.Ft,
+            language: Languages.Hungarian,
             seller: seller,
             buyer: buyer,
             items: [soldItem1, soldItem2],
@@ -154,9 +154,9 @@ describe('Invoice', function () {
 
         it('should throw an error when adjustmentInvoiceNumber is a boolean', function () {
           const invoice = new Invoice({
-            paymentMethod: PaymentMethod.BankTransfer,
-            currency: Currency.Ft,
-            language: Language.Hungarian,
+            paymentMethod: PaymentMethods.BankTransfer,
+            currency: Currencies.Ft,
+            language: Languages.Hungarian,
             seller: seller,
             buyer: buyer,
             items: [soldItem1, soldItem2],
@@ -170,9 +170,9 @@ describe('Invoice', function () {
         it('should not throw an error when adjustmentInvoiceNumber is a non-empty string', function () {
           expect(() => {
             const invoice = new Invoice({
-              paymentMethod: PaymentMethod.BankTransfer,
-              currency: Currency.Ft,
-              language: Language.Hungarian,
+              paymentMethod: PaymentMethods.BankTransfer,
+              currency: Currencies.Ft,
+              language: Languages.Hungarian,
               seller: seller,
               buyer: buyer,
               items: [soldItem1, soldItem2],
@@ -184,9 +184,9 @@ describe('Invoice', function () {
 
         it('should include adjustmentInvoiceNumber when it is a non-empty string', async function () {
           const invoice = new Invoice({
-            paymentMethod: PaymentMethod.BankTransfer,
-            currency: Currency.Ft,
-            language: Language.Hungarian,
+            paymentMethod: PaymentMethods.BankTransfer,
+            currency: Currencies.Ft,
+            language: Languages.Hungarian,
             seller: seller,
             buyer: buyer,
             items: [soldItem1, soldItem2],
@@ -204,9 +204,9 @@ describe('Invoice', function () {
         it('should not include noNavReport when it is null.', async function () {
           const invoice = new Invoice({
             noNavReport: null,
-            paymentMethod: PaymentMethod.BankTransfer,
-            currency: Currency.Ft,
-            language: Language.Hungarian,
+            paymentMethod: PaymentMethods.BankTransfer,
+            currency: Currencies.Ft,
+            language: Languages.Hungarian,
             seller: seller,
             buyer: buyer,
             items: [soldItem1, soldItem2],
@@ -220,9 +220,9 @@ describe('Invoice', function () {
         it('should not include noNavReport when it is undefined.', async function () {
           const invoice = new Invoice({
             noNavReport: undefined,
-            paymentMethod: PaymentMethod.BankTransfer,
-            currency: Currency.Ft,
-            language: Language.Hungarian,
+            paymentMethod: PaymentMethods.BankTransfer,
+            currency: Currencies.Ft,
+            language: Languages.Hungarian,
             seller: seller,
             buyer: buyer,
             items: [soldItem1, soldItem2],
@@ -236,9 +236,9 @@ describe('Invoice', function () {
         it('should set eusAfa to true when noNavReport = true', async function () {
           const invoice = new Invoice({
             noNavReport: true,
-            paymentMethod: PaymentMethod.BankTransfer,
-            currency: Currency.Ft,
-            language: Language.Hungarian,
+            paymentMethod: PaymentMethods.BankTransfer,
+            currency: Currencies.Ft,
+            language: Languages.Hungarian,
             seller: seller,
             buyer: buyer,
             items: [soldItem1, soldItem2],
@@ -253,9 +253,9 @@ describe('Invoice', function () {
         it('should set eusAfa to false when noNavReport = false', async function () {
           const invoice = new Invoice({
             noNavReport: false,
-            paymentMethod: PaymentMethod.BankTransfer,
-            currency: Currency.Ft,
-            language: Language.Hungarian,
+            paymentMethod: PaymentMethods.BankTransfer,
+            currency: Currencies.Ft,
+            language: Languages.Hungarian,
             seller: seller,
             buyer: buyer,
             items: [soldItem1, soldItem2],

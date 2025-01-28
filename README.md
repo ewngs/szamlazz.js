@@ -24,7 +24,8 @@ import {
   PaymentMethod,
   PaymentMethods,
   TaxSubject,
-  TaxSubjects} from 'szamlazz.js'
+  TaxSubjects,
+  CreditEntry} from 'szamlazz.js'
 ```
 
 ### Create a client
@@ -123,6 +124,18 @@ let soldItem2 = new Item({
 })
 ```
 
+### Create a credit entry
+
+With net unit price:
+```javascript
+let creditEntry = new CreditEntry({
+  amount: 1000,
+  paymentMethod: PaymentMethods.BankTransfer,
+  description: '', // Default is mempty
+  date: new Date() // Default is current date
+})
+```
+
 ### Create an invoice
 
 You can create an invoice with the instances created above:
@@ -208,6 +221,67 @@ Response
   grossTotal: '1270',         // Total value of the reverse invoice incl. VAT
   customerAccountUrl: 'https://www.szamlazz.hu/szamla/fiok/gd82embu556d2qjagzj3s2ijqeqzds4ckhuf',      // Customer account URL if the customer has an account otherwise undefined
   pdf: null                   // the PDF content as a Buffer if requestInvoiceDownload was true, otherwise undefined
+}
+```
+
+### Query tax payer
+
+Through this interface, it is possible to query the correctness of a given tax number and the taxpayer's details. The response always matches the QueryTaxPayerResponse type of Online Invoice Platform of NAV, the Hungarian National Tax and Customs Administration.
+
+```javascript
+const szamlazzClient = new Client({
+  authToken: 'SZAMLAAGENTKEY',
+})
+
+const taxPayer = await szamlazzClient.queryTaxPayer(12345678) //8 digit taxpayerId
+```
+
+Response
+```javascript
+{
+  taxpayerValidity: true,
+  taxpayerId: '12345678',
+  vatCode: '2',
+  countyCode: '41',
+  taxpayerName: 'taxpayerName KERESKEDELMI ÉS SZOLGÁLTATÓ KORLÁTOLT FELELŐSSÉGŰ TÁRSASÁG',
+  taxpayerShortName: 'taxpayerName KFT.',
+  address: {
+    countryCode: 'HU',
+    postalCode: '1000',
+    city: 'BUDAPEST',
+    streetName: 'TESZT',
+    publicPlaceCategory: 'UTCA',
+    number: '1.'
+  }
+}
+```
+
+### Registering credit entry
+
+You can use this interface to record a credit (deposit) to an invoice you have previously created. Basically you can use this to mark an invoice as paid.
+
+```javascript
+const szamlazzClient = new Client({
+  authToken: 'SZAMLAAGENTKEY',
+})
+
+const creditEntry = new CreditEntry({
+  amount: 1000
+});
+
+const creditEntryResponse = await szamlazzClient.registerCreditEntry({
+  invoiceId: 'WXSKA-2020-00',
+  additive: true, // Default is true
+  taxNumber: '' // Default is empty
+}, [creditEntry])
+```
+
+Response
+```javascript
+{
+  invoiceId: 'WXSKA-2020-00', // The id of the created  invoice
+  netTotal: '1000',           // Total value of the  invoice excl. VAT
+  grossTotal: '1270',         // Total value of the  invoice incl. VAT
 }
 ```
 

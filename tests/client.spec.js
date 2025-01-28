@@ -5,7 +5,7 @@ import { expect, use as chaiUse } from 'chai'
 import chaiAsPromised from '@rvagg/chai-as-promised'
 chaiUse(chaiAsPromised)
 
-import { Buyer, Client, Invoice, Item, Seller } from '../index.js'
+import { Buyer, Client, Invoice, Item, Seller, CreditEntry } from '../index.js'
 import {
   createClient,
   createTokenClient,
@@ -14,6 +14,7 @@ import {
   createSoldItemNet,
   createSoldItemGross,
   createInvoice,
+  createCreditEntry,
   RESPONSE_FILE_PATHS
 } from './resources/setup.js'
 
@@ -26,6 +27,8 @@ describe('Client', () => {
   let soldItem2
   let invoice
   let reversalRequest
+  let creditEntry
+  let creditEntryOptions
 
   before(() => {
     nock.disableNetConnect()
@@ -43,6 +46,12 @@ describe('Client', () => {
       invoiceId: 'E-RNJLO-2019-1234',  
       eInvoice: true,                  
       requestInvoiceDownload: false,   
+    }
+    creditEntry = createCreditEntry(CreditEntry)
+    creditEntryOptions = {
+      invoiceId: 'E-RNJLO-2019-1234',
+      additiv: true,
+      taxNumber: ''
     }
   })
 
@@ -261,7 +270,6 @@ describe('Client', () => {
 
   })
 
-
   describe('getInvoiceData', () => {
     describe('unsuccessful invoice generation', () => {
       beforeEach(() => {
@@ -279,6 +287,109 @@ describe('Client', () => {
       })
     })
   })
+
+  describe('queryTaxPayer', () => {
+    describe('when the taxpayer ID is invalid', () => {
+      beforeEach(() => {
+        nock('https://www.szamlazz.hu')
+          .post('/szamla/')
+          .replyWithFile(200, RESPONSE_FILE_PATHS.INVALID_TAXPAYER);
+      });
+  
+      it('should return taxpayerValidity as false', async () => {
+        const result = await client.queryTaxPayer(12345678);
+        
+        expect(result).to.deep.equal({
+          taxpayerValidity: false,
+        });
+      });
+    });
+
+    describe('when the taxpayer ID is valid', () => {
+      beforeEach(() => {
+        nock('https://www.szamlazz.hu')
+          .post('/szamla/')
+          .replyWithFile(200, RESPONSE_FILE_PATHS.VALID_TAXPAYER);
+      });
+  
+      it('should return correct taxpayer details', async () => {
+        const result = await client.queryTaxPayer(12345678);
+  
+        expect(result).to.deep.equal({
+          taxpayerValidity: true,
+          taxpayerId: '12345678',
+          vatCode: '2',
+          countyCode: '41',
+          taxpayerName: 'taxpayerName',
+          taxpayerShortName: 'taxpayerShortName',
+          address: {
+            countryCode: 'HU',
+            postalCode: '1000',
+            city: 'BUDAPEST',
+            streetName: 'TESZT',
+            publicPlaceCategory: 'UTCA',
+            number: '1.'
+          },
+        });
+      });
+    });
+  
+  })
+
+  describe('registerCreditEntry', () => {
+    describe('HTTP status', () => {
+      it('should handle failed requests', async () => {
+        nock('https://www.szamlazz.hu')
+          .post('/szamla/')
+          .reply(404)
+
+        await expect(client.registerCreditEntry(creditEntryOptions, [creditEntry])).rejectedWith('Request failed with status code 404')
+        nock.isDone()
+      })
+    })
+
+    describe('successful credit entry registration', () => {
+      beforeEach(() => {
+        nock('https://www.szamlazz.hu')
+          .post('/szamla/')
+          .replyWithFile(200, RESPONSE_FILE_PATHS.SUCCESS_WITHOUT_PDF, {
+            szlahu_bruttovegosszeg: '6605',
+            szlahu_nettovegosszeg: '5201',
+            szlahu_szamlaszam: '2016-139'
+          })
+      })
+
+      it('should have result parameter', async () => {
+        const httpResponse = await client.registerCreditEntry(creditEntryOptions, [creditEntry])
+        expect(httpResponse).to.have.all.keys(
+          'invoiceId',
+          'netTotal',
+          'grossTotal'
+        )
+      })
+
+      it('should have `invoiceId` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+
+        expect(httpResponse).to.have.property('invoiceId').that.is.a('string')
+      })
+
+      it('should have `netTotal` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+
+        expect(parseFloat(httpResponse.netTotal)).is.a('number')
+      })
+
+      it('should have `grossTotal` property', async () => {
+        const httpResponse = await client.issueInvoice(invoice)
+
+        expect(parseFloat(httpResponse.grossTotal)).is.a('number')
+      })
+      
+    })
+
+  })
+
 })
 
 describe('Client with auth token', () => {

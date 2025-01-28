@@ -5,7 +5,9 @@ import {Currencies, Languages, PaymentMethods, TaxSubjects} from "../../lib/Cons
 export const RESPONSE_FILE_PATHS = Object.freeze({
   SUCCESS_WITH_PDF: join(import.meta.url, 'success_with_pdf.xml'),
   SUCCESS_WITHOUT_PDF: join(import.meta.url, 'success_without_pdf.xml'),
-  UNKNOWN_INVOICE_NUMBER: join(import.meta.url, 'unknown_invoice_number.xml')
+  UNKNOWN_INVOICE_NUMBER: join(import.meta.url, 'unknown_invoice_number.xml'),
+  INVALID_TAXPAYER: join(import.meta.url, 'invalid_taxpayer.xml'),
+  VALID_TAXPAYER: join(import.meta.url, 'valid_taxpayer.xml')
 })
 
 /**
@@ -122,5 +124,19 @@ export function createInvoice(Invoice, seller, buyer, items) {
     seller: seller,
     buyer: buyer,
     items
+  })
+}
+
+/**
+ * Create credit entry
+ * Optional and can be used to override the default data.
+ * @return {CreditEntry}
+ */
+export function createCreditEntry(CreditEntry) {
+  return new CreditEntry({
+    paymentMethod: PaymentMethod.BankTransfer,
+    amount: 1000,
+    date: new Date(),
+    description: 'optional description'
   })
 }

@@ -1,6 +1,6 @@
 import { join } from 'desm'
 
-import {Currency, Language, PaymentMethod, TaxSubjects} from "../../lib/Constants.js"
+import {Currencies, Languages, PaymentMethods, TaxSubjects} from "../../lib/Constants.js"
 
 export const RESPONSE_FILE_PATHS = Object.freeze({
   SUCCESS_WITH_PDF: join(import.meta.url, 'success_with_pdf.xml'),
@@ -116,9 +116,9 @@ export function createSoldItemGross(Item) {
  */
 export function createInvoice(Invoice, seller, buyer, items) {
   return new Invoice({
-    paymentMethod: PaymentMethod.BankTransfer,
-    currency: Currency.Ft,
-    language: Language.Hungarian,
+    paymentMethod: PaymentMethods.BankTransfer,
+    currency: Currencies.Ft,
+    language: Languages.Hungarian,
     seller: seller,
     buyer: buyer,
     items

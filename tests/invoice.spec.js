@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 
 import xml2js from 'xml2js'
-const parser = new xml2js.Parser()
 import { expect } from 'chai'
 
 import { Buyer, Invoice, Item, Seller } from '../index.js'
@@ -41,22 +40,19 @@ describe('Invoice', function () {
     })
   })
   describe('_generateXML', function () {
-    it('should return valid XML', function (done) {
-      parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
-        expect(result).to.have.property('wrapper').that.is.an('object')
-        done()
-      })
+    it('should return valid XML', async function () {
+      const result = await xml2js.parseStringPromise('<wrapper>' + invoice._generateXML() + '</wrapper>')
+
+      expect(result).to.have.property('wrapper').that.is.an('object')
     })
 
     describe('generated XML', function () {
       let obj
 
-      beforeEach(function (done) {
-        parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
-          if (!err) obj = result.wrapper
+      beforeEach(async function () {
+        const result = await xml2js.parseStringPromise('<wrapper>' + invoice._generateXML() + '</wrapper>')
 
-          done()
-        })
+        obj = result.wrapper
       })
 
       it('should have `fejlec` node', function () {
@@ -77,7 +73,7 @@ describe('Invoice', function () {
 
       // START- New test suite for adjustmentInvoiceNumber property
       describe('adjustmentInvoiceNumber validation', function () {
-        it('should not include adjustmentInvoiceNumber when it is null', function (done) {
+        it('should not include adjustmentInvoiceNumber when it is null', async function () {
           const invoice = new Invoice({
             adjustmentInvoiceNumber: null,
             paymentMethod: PaymentMethod.BankTransfer,
@@ -88,14 +84,13 @@ describe('Invoice', function () {
             items: [soldItem1, soldItem2],
           });
 
-          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
-            expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitettSzamlaszam');
-            expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitoszamla');
-            done(err);
-          });
+          const result = await xml2js.parseStringPromise('<wrapper>' + invoice._generateXML() + '</wrapper>')
+
+          expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitettSzamlaszam');
+          expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitoszamla');
         });
 
-        it('should not include adjustmentInvoiceNumber when it is undefined', function (done) {
+        it('should not include adjustmentInvoiceNumber when it is undefined', async function () {
           const invoice = new Invoice({
             paymentMethod: PaymentMethod.BankTransfer,
             currency: Currency.Ft,
@@ -105,11 +100,10 @@ describe('Invoice', function () {
             items: [soldItem1, soldItem2],
           });
 
-          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
-            expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitettSzamlaszam');
-            expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitoszamla');
-            done(err);
-          });
+          const result = await xml2js.parseStringPromise('<wrapper>' + invoice._generateXML() + '</wrapper>')
+
+          expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitettSzamlaszam');
+          expect(result.wrapper).to.not.have.deep.property('fejlec.helyesbitoszamla');
         });
 
         it('should throw an error when adjustmentInvoiceNumber is an empty string', function () {
@@ -188,7 +182,7 @@ describe('Invoice', function () {
           }).to.not.throw();
         });
 
-        it('should include adjustmentInvoiceNumber when it is a non-empty string', function (done) {
+        it('should include adjustmentInvoiceNumber when it is a non-empty string', async function () {
           const invoice = new Invoice({
             paymentMethod: PaymentMethod.BankTransfer,
             currency: Currency.Ft,
@@ -198,17 +192,16 @@ describe('Invoice', function () {
             items: [soldItem1, soldItem2],
             adjustmentInvoiceNumber: '12345'
           });
-          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
-            expect(result.wrapper.fejlec[0].helyesbitettSzamlaszam[0]).to.equal('12345');
-            expect(result.wrapper.fejlec[0].helyesbitoszamla[0]).to.equal('true');
-            done(err);
-          });
+          const result = await xml2js.parseStringPromise('<wrapper>' + invoice._generateXML() + '</wrapper>')
+
+          expect(result.wrapper.fejlec[0].helyesbitettSzamlaszam[0]).to.equal('12345');
+          expect(result.wrapper.fejlec[0].helyesbitoszamla[0]).to.equal('true');
         });
       });
       // END - New test suite for adjustmentInvoiceNumber property
 
       describe('NAV reporting', function () {
-        it('should not include noNavReport when it is null.', function (done) {
+        it('should not include noNavReport when it is null.', async function () {
           const invoice = new Invoice({
             noNavReport: null,
             paymentMethod: PaymentMethod.BankTransfer,
@@ -219,13 +212,12 @@ describe('Invoice', function () {
             items: [soldItem1, soldItem2],
           });
 
-          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
-            expect(result.wrapper).to.not.have.deep.property('fejlec.eusAfa');
-            done(err);
-          });
+          const result = await xml2js.parseStringPromise('<wrapper>' + invoice._generateXML() + '</wrapper>')
+
+          expect(result.wrapper).to.not.have.deep.property('fejlec.eusAfa');
         });
 
-        it('should not include noNavReport when it is undefined.', function (done) {
+        it('should not include noNavReport when it is undefined.', async function () {
           const invoice = new Invoice({
             noNavReport: undefined,
             paymentMethod: PaymentMethod.BankTransfer,
@@ -236,13 +228,12 @@ describe('Invoice', function () {
             items: [soldItem1, soldItem2],
           });
 
-          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
-            expect(result.wrapper).to.not.have.deep.property('fejlec.eusAfa');
-            done(err);
-          });
+          const result = await xml2js.parseStringPromise('<wrapper>' + invoice._generateXML() + '</wrapper>')
+
+          expect(result.wrapper).to.not.have.deep.property('fejlec.eusAfa');
         });
 
-        it('should set eusAfa to true when noNavReport = true', function (done) {
+        it('should set eusAfa to true when noNavReport = true', async function () {
           const invoice = new Invoice({
             noNavReport: true,
             paymentMethod: PaymentMethod.BankTransfer,
@@ -253,14 +244,13 @@ describe('Invoice', function () {
             items: [soldItem1, soldItem2],
           });
 
-          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
-            // it returns with string true because the xml parser parse it as string
-            expect(result.wrapper.fejlec[0].eusAfa).to.deep.equal(['true']);
-            done(err);
-          });
+          const result = await xml2js.parseStringPromise('<wrapper>' + invoice._generateXML() + '</wrapper>')
+
+          // it returns with string true because the xml parser parse it as string
+          expect(result.wrapper.fejlec[0].eusAfa).to.deep.equal(['true']);
         });
 
-        it('should set eusAfa to false when noNavReport = false', function (done) {
+        it('should set eusAfa to false when noNavReport = false', async function () {
           const invoice = new Invoice({
             noNavReport: false,
             paymentMethod: PaymentMethod.BankTransfer,
@@ -271,11 +261,10 @@ describe('Invoice', function () {
             items: [soldItem1, soldItem2],
           });
 
-          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
-            // it returns with string true because the xml parser parse it as string
-            expect(result.wrapper.fejlec[0].eusAfa).to.deep.equal(['false']);
-            done(err);
-          });
+          const result = await xml2js.parseStringPromise('<wrapper>' + invoice._generateXML() + '</wrapper>')
+
+          // it returns with string true because the xml parser parse it as string
+          expect(result.wrapper.fejlec[0].eusAfa).to.deep.equal(['false']);
         });
       })
     });

@@ -200,6 +200,132 @@ describe('Invoice', function () {
       });
       // END - New test suite for adjustmentInvoiceNumber property
 
+      describe('prepaymentInvoiceNumber validation', function () {
+        it('should throw an error when finalInvoice is not set', function () {
+          expect(() => {
+            invoice = new Invoice({
+              prepaymentInvoiceNumber: '1234',
+              paymentMethod: PaymentMethod.BankTransfer,
+              currency: Currency.Ft,
+              language: Language.Hungarian,
+              seller: seller,
+              buyer: buyer,
+              items: [soldItem1, soldItem2],
+            });
+            invoice._generateXML();
+          }).to.throw(/"prepaymentInvoiceNumber" should only be set if "finalInvoice" is true/);
+        });
+
+        it('should throw an error when finalInvoice is false', function () {
+          expect(() => {
+            invoice = new Invoice({
+              finalInvoice: false,
+              prepaymentInvoiceNumber: '1234',
+              paymentMethod: PaymentMethod.BankTransfer,
+              currency: Currency.Ft,
+              language: Language.Hungarian,
+              seller: seller,
+              buyer: buyer,
+              items: [soldItem1, soldItem2],
+            });
+            invoice._generateXML();
+          }).to.throw(/"prepaymentInvoiceNumber" should only be set if "finalInvoice" is true/);
+        });
+
+        it('should throw an error when prepaymentInvoiceNumber is an empty string', function () {
+          expect(() => {
+            invoice = new Invoice({
+              prepaymentInvoiceNumber: '',
+              paymentMethod: PaymentMethod.BankTransfer,
+              currency: Currency.Ft,
+              language: Language.Hungarian,
+              seller: seller,
+              buyer: buyer,
+              items: [soldItem1, soldItem2],
+            });
+            invoice._generateXML();
+          }).to.throw(/"prepaymentInvoiceNumber" should be minimum 1 character/);
+        });
+
+        it('should throw an error when prepaymentInvoiceNumber is a Date object', function () {
+          expect(() => {
+            invoice = new Invoice({
+              paymentMethod: PaymentMethod.BankTransfer,
+              currency: Currency.Ft,
+              language: Language.Hungarian,
+              seller: seller,
+              buyer: buyer,
+              items: [soldItem1, soldItem2],
+              prepaymentInvoiceNumber: new Date()
+            });
+            invoice._generateXML();
+          }).to.throw(/"prepaymentInvoiceNumber" should be a string/);
+        });
+
+        it('should throw an error when prepaymentInvoiceNumber is a number', function () {
+          invoice = new Invoice({
+            paymentMethod: PaymentMethod.BankTransfer,
+            currency: Currency.Ft,
+            language: Language.Hungarian,
+            seller: seller,
+            buyer: buyer,
+            items: [soldItem1, soldItem2],
+            prepaymentInvoiceNumber: 123
+          });
+          expect(() => {
+            invoice._generateXML();
+          }).to.throw(/"prepaymentInvoiceNumber" should be a string/);
+        });
+
+        it('should throw an error when prepaymentInvoiceNumber is a boolean', function () {
+          const invoice = new Invoice({
+            paymentMethod: PaymentMethod.BankTransfer,
+            currency: Currency.Ft,
+            language: Language.Hungarian,
+            seller: seller,
+            buyer: buyer,
+            items: [soldItem1, soldItem2],
+            prepaymentInvoiceNumber: true
+          });
+          expect(() => {
+            invoice._generateXML();
+          }).to.throw(/"prepaymentInvoiceNumber" should be a string/);
+        });
+
+        it('should not throw an error when prepaymentInvoiceNumber is a non-empty string and finalInvoice is true', function () {
+          expect(() => {
+            const invoice = new Invoice({
+              paymentMethod: PaymentMethod.BankTransfer,
+              currency: Currency.Ft,
+              language: Language.Hungarian,
+              seller: seller,
+              buyer: buyer,
+              items: [soldItem1, soldItem2],
+              finalInvoice: true,
+              prepaymentInvoiceNumber: '12345'
+            });
+            invoice._generateXML();
+          }).to.not.throw();
+        });
+
+        it('should include prepaymentInvoiceNumber when it is a non-empty string and finalInvoice is true', function (done) {
+          const invoice = new Invoice({
+            paymentMethod: PaymentMethod.BankTransfer,
+            currency: Currency.Ft,
+            language: Language.Hungarian,
+            seller: seller,
+            buyer: buyer,
+            items: [soldItem1, soldItem2],
+            finalInvoice: true,
+            prepaymentInvoiceNumber: '12345'
+          });
+          parser.parseString('<wrapper>' + invoice._generateXML() + '</wrapper>', function (err, result) {
+            expect(result.wrapper.fejlec[0].elolegSzamlaszam[0]).to.equal('12345');
+            done(err);
+          });
+        });
+      });
+
       describe('NAV reporting', function () {
         it('should not include noNavReport when it is null.', async function () {
           const invoice = new Invoice({

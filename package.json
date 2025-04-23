@@ -8,8 +8,8 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha 'tests/*.spec.js'",
-    "testWatch": "mocha 'tests/*.spec.js' --watch"
+    "test": "node --test",
+    "testWatch": "node --watch --test"
   },
   "repository": {
     "type": "git",
@@ -25,7 +25,6 @@
     "@rvagg/chai-as-promised": "^8.0.1",
     "chai": "^5.0.0",
     "desm": "^1.3.0",
-    "mocha": "^11.0.1",
     "nock": "^14.0.0"
   },
   "dependencies": {

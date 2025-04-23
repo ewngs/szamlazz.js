@@ -1,5 +1,4 @@
-/* eslint-env mocha */
-
+import {beforeEach, describe, it} from 'node:test';
 import xml2js from 'xml2js'
 import {expect} from 'chai'
 
@@ -24,42 +23,35 @@ describe('Item', function () {
   })
 
   describe('constructor', function () {
-    it('should set _options property', function (done) {
+    it('should set _options property', function () {
       expect(soldItem1).to.have.property('_options').that.is.an('object')
-      done()
     })
 
-    it('should set label', function (done) {
+    it('should set label', function () {
       expect(soldItem1._options).to.have.property('label').that.is.a('string')
-      done()
     })
 
-    it('should set quantity', function (done) {
+    it('should set quantity', function () {
       expect(soldItem1._options).to.have.property('quantity').that.is.a('number')
-      done()
     })
 
-    it('should set unit', function (done) {
+    it('should set unit', function () {
       expect(soldItem1._options).to.have.property('unit').that.is.a('string')
-      done()
     })
 
-    it('should set vat', function (done) {
+    it('should set vat', function () {
       expect(soldItem1._options).to.have.property('vat').that.is.a('number')
-      done()
     })
 
-    it('should set netUnitPrice or grossUnitPrice', function (done) {
+    it('should set netUnitPrice or grossUnitPrice', function () {
       let price = soldItem1._options.netUnitPrice || soldItem1._options.grossUnitPrice
       expect(price).is.a('number')
-      done()
     })
   })
 
   describe('_generateXML', function () {
-    it('should calculate netUnitPrice', function (done) {
+    it('should calculate netUnitPrice', function () {
       expect(soldItem1._options).to.have.property('netUnitPrice').that.is.a('number')
-      done()
     })
 
     it ('should support 0 net unit price', async function () {
@@ -150,9 +142,8 @@ describe('Item', function () {
       }
     })
 
-    it('should calculate vatValue', function (done) {
+    it('should calculate vatValue', function () {
       expect(soldItem1._options).to.have.property('vatValue').that.is.a('number')
-      done()
     })
 
     it('should return valid XML', async function () {
@@ -168,43 +159,35 @@ describe('Item', function () {
         obj = result.tetel
       })
 
-      it('should have `megnevezes` property', function (done) {
+      it('should have `megnevezes` property', function () {
         expect(obj).to.have.property('megnevezes')
-        done()
       })
 
-      it('should have `mennyiseg` property', function (done) {
+      it('should have `mennyiseg` property', function () {
         expect(obj).to.have.property('mennyiseg')
-        done()
       })
 
-      it('should have `mennyisegiEgyseg` property', function (done) {
+      it('should have `mennyisegiEgyseg` property', function () {
         expect(obj).to.have.property('mennyisegiEgyseg')
-        done()
       })
 
-      it('should have `nettoEgysegar` property', function (done) {
+      it('should have `nettoEgysegar` property', function () {
         expect(obj).to.have.property('nettoEgysegar')
-        done()
       })
-      it('should have `afakulcs` property', function (done) {
+      it('should have `afakulcs` property', function () {
         expect(obj).to.have.property('afakulcs')
-        done()
       })
 
-      it('should have `nettoErtek` property', function (done) {
+      it('should have `nettoErtek` property', function () {
         expect(obj).to.have.property('nettoErtek')
-        done()
       })
 
-      it('should have `afaErtek` property', function (done) {
+      it('should have `afaErtek` property', function () {
         expect(obj).to.have.property('afaErtek')
-        done()
       })
 
-      it('should have `bruttoErtek` property', function (done) {
+      it('should have `bruttoErtek` property', function () {
         expect(obj).to.have.property('bruttoErtek')
-        done()
       })
     })
   })

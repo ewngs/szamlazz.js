@@ -1,5 +1,4 @@
-/* eslint-env mocha */
-
+import {after, afterEach, before, beforeEach, describe, it} from 'node:test';
 import nock from 'nock'
 import { expect, use as chaiUse } from 'chai'
 import chaiAsPromised from '@rvagg/chai-as-promised'
@@ -40,9 +39,9 @@ describe('Client', () => {
     soldItem2 = createSoldItemGross(Item)
     invoice = createInvoice(Invoice, seller, buyer, [soldItem1, soldItem2])
     reversalRequest = {
-      invoiceId: 'E-RNJLO-2019-1234',  
-      eInvoice: true,                  
-      requestInvoiceDownload: false,   
+      invoiceId: 'E-RNJLO-2019-1234',
+      eInvoice: true,
+      requestInvoiceDownload: false,
     }
   })
 
@@ -141,8 +140,6 @@ describe('Client', () => {
         const httpResponse = await client.issueInvoice(invoice)
         expect(httpResponse.customerAccountUrl).to.be.equals('https://www.szamlazz.hu/szamla/fiok/gd82embu556d2qjagzj3s2ijqeqzds4ckhuf')
       })
-
-      
     })
 
     describe('successful invoice generation with download request', () => {
@@ -189,11 +186,11 @@ describe('Client', () => {
         const httpResponse = await client.issueInvoice(invoice)
         expect(httpResponse.pdf).to.be.an.instanceof(Buffer)
       })
-      
+
       it('should have `customerAccountUrl` property', async () => {
         const httpResponse = await client.issueInvoice(invoice)
         expect(httpResponse).to.have.property('customerAccountUrl').that.is.satisfies((value) => typeof value === 'string' || value === undefined);
-      }) 
+      })
     })
   })
 
@@ -255,8 +252,6 @@ describe('Client', () => {
         const httpResponse = await client.reverseInvoice(reversalRequest)
         expect(httpResponse.customerAccountUrl).to.be.equals('https://www.szamlazz.hu/szamla/fiok/gd82embu556d2qjagzj3s2ijqeqzds4ckhuf')
       })
-
-      
     })
 
   })

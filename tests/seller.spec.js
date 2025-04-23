@@ -1,5 +1,4 @@
-/* eslint-env mocha */
-
+import {beforeEach, describe, it} from 'node:test';
 import xml2js from 'xml2js'
 import {expect} from 'chai'
 

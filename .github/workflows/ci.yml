@@ -24,6 +24,8 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
+      - run: tree
+
       - name: Install dependencies
         run: npm i
 

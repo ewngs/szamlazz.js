@@ -8,8 +8,8 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "test": "node --test \"./tests/**/*.spec.js\"",
-    "testWatch": "node --watch --test \"./tests/**/*.spec.js\""
+    "test": "node --test",
+    "testWatch": "node --watch --test"
   },
   "repository": {
     "type": "git",

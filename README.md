@@ -233,7 +233,7 @@ const szamlazzClient = new Client({
   authToken: 'SZAMLAAGENTKEY',
 })
 
-const taxPayer = await szamlazzClient.queryTaxPayer(12345678) //8 digit taxpayerId
+const taxPayer = await szamlazzClient.queryTaxPayer('12345678') //8 digit taxpayerId(as string)
 ```
 
 Response
